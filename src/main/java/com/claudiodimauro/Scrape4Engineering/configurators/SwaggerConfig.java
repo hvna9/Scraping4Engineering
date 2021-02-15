@@ -25,7 +25,6 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.basePackage("com.claudiodimauro.Scraper4Engineering.api"))
                 .build()
                 .apiInfo(apiDetails());
-
     }
 
     private ApiInfo apiDetails() {
