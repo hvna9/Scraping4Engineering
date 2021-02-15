@@ -4,3 +4,6 @@ A Web Scraping application to retrieve and store data from Web sorurces. The pro
 ## Why this project?
 The project with codename "Scraping4Engineering" is a work born to carry on the curricular internship for the University of Salerno. This Training is the result of a collaboration beetween the University and Engineering Ingegneria Informatica S.p.a. (www.eng.it), a Company that operates in the IT sector.
 The project plans to get some data from Web pages and store them into MedITech's catalogues. Since the MedITech's data saving systems are not known, the best method to product something good, was to use the REST APIs, in order to expose data as JSON object: in this way, the developers didn't care how the data will be stored, but only the possibility to get and provide them. 
+
+### Other informations
+Coming soon...
