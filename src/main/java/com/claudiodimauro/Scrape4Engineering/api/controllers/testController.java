@@ -10,5 +10,5 @@ package com.claudiodimauro.Scrape4Engineering.api.controllers;
  * @author claudiodimauro
  */
 public class testController {
-    
+    String string = "stringa di prova";
 }
