@@ -6,4 +6,4 @@ The project with codename "Scraping4Engineering" is a work born to carry on the 
 The project plans to get some data from Web pages and store them into MedITech's catalogues. Since the MedITech's data saving systems are not known, the best method to product something good, was to use the REST APIs, in order to expose data as JSON object: in this way, the developers didn't care how the data will be stored, but only the possibility to get and provide them. 
 
 ### Other informations
-Coming soon...
+Coming soon...s
