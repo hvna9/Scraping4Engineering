@@ -7,3 +7,5 @@ The project plans to get some data from Web pages and store them into MedITech's
 
 ### Other informations
 Coming soon...
+
+CIAO PIERPAOLO, QUESTA è UNA MODIFICA
