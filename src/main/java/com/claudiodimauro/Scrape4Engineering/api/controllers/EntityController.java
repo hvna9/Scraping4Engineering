@@ -1,8 +1,18 @@
 package com.claudiodimauro.Scrape4Engineering.api.controllers;
 
 import com.claudiodimauro.Scrape4Engineering.api.models.Entity;
+import com.claudiodimauro.Scrape4Engineering.api.models.Pattern;
 import com.claudiodimauro.Scrape4Engineering.api.services.EntityService;
+import com.claudiodimauro.Scrape4Engineering.api.services.PatternService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,42 +22,177 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.service.Contact;
 
 @RestController
 @RequestMapping("/api")
 public class EntityController {
-     @Autowired
+
+    @Autowired
     private EntityService entityService;
-     
+    @Autowired
+    private PatternService patternService;
+
     @GetMapping("/getAllentities")
+    @ApiOperation(value = "",
+            response = Contact.class)//vedere se rimuover Contact.class
     public List<Entity> getAll() {
         return entityService.getList();
     }
 
     @GetMapping("/getEntity/{id}")
-    public Entity getById(@PathVariable("id") String id) {
+    @ApiOperation(value = "",
+            notes = "",
+            response = Contact.class)
+    public Entity getById(@ApiParam(value = "...", required = true) @PathVariable("id") String id) {
         return entityService.getById(id)
                 .orElse(null);
     }
 
     //DA SISTEMARE
     @GetMapping("/getEntity/{title}")
-    public Entity getByTitle(@PathVariable("title") String title) {
+    @ApiOperation(value = "",
+            notes = "",
+            response = Contact.class)
+    public Entity getByTitle(@ApiParam(value = "...", required = true) @PathVariable("title") String title) {
         return entityService.getById(title)
                 .orElse(null);
     }
-    
+
     /**
-     * * Da implementare **
+     * * Cambiato da scrapeAndUpload **
      */
-    @PostMapping("/scrapeAndUpload")
-    public String scrapeAndUpload() {
-        //to define
+    @PostMapping("/scrapeByPattern")
+    @ApiOperation(value = "",
+            notes = "",
+            response = Contact.class)
+    public String scrapeByPattern(@RequestBody String id) {
+
+        List<Pattern> patterns = patternService.getList();
+        Pattern pattern = new Pattern();
+        for (Pattern p : patterns) {
+            String i = p.getUrl();
+            if (i.equals(id)) {
+                pattern = p;
+            }
+        }
+
+        if (pattern.getUrl() == null) {
+            System.out.println(pattern.getUrl());
+            return "patern inesistente id:" + id;
+        }
+
+        try {
+            
+            Document doc = Jsoup.connect(pattern.getUrl()).timeout(10000).get();
+
+            Elements entityElements = doc.select(pattern.getTagForBody());
+            for (Element entityElement : entityElements) {
+                Entity entity = new Entity();
+
+                Elements idElements = entityElement.select(pattern.getTagForEntityId());
+                if (!idElements.isEmpty()) {
+                    entity.setEntityId(idElements.get(0).attr(pattern.getAttrForEntityId()));
+                }
+
+                Elements titleElements = entityElement.select(pattern.getTagForEntityTitle());
+                if (!titleElements.isEmpty()) {
+                    if (pattern.getSelectorMethodForEntityTitle() == true) {//vedere se togliere ==
+                        entity.setEntityTitle(titleElements.text());
+                    } else {
+                        entity.setEntityTitle(titleElements.get(0).attr(pattern.getAttrForEntityTitle()));
+                    }
+                }
+
+                Elements pathElements = entityElement.select(pattern.getEntityPath());
+                if (!pathElements.isEmpty()) {
+                    entity.setPath(pathElements.get(0).attr("href"));
+                }
+                // veder come fare a convertirlo in tipo date
+                Elements lastEntityUpdateElements = entityElement.select(pattern.getLastEntityUpdate());
+                if (!lastEntityUpdateElements.isEmpty()) {
+                    entity.setLastUpdate(lastEntityUpdateElements.attr(pattern.getAttrLastEntityUpdate()));
+                }
+
+                Date d = new Date();
+                entity.setLastScraping(d);//da vedere se inserire nel controllo di inserimento
+
+                entity.setBasePath(pattern.getUrl());
+
+                entityService.create(entity);
+            }
+
+        } catch (IOException ex) {
+            System.out.println("Catturata un'eccezione: \n" + ex.toString());
+        }
+
         return "";
     }
-    
+
+    @PostMapping("/scrapeWithoutPattern")
+    @ApiOperation(value = "",
+            notes = "",
+            response = Contact.class)
+    public String scrapeWithoutpattern(@RequestBody Pattern pattern) {
+
+        if (pattern.getUrl() == null) {
+            return "Pattern non valido";//controllare
+        }
+        
+        try {
+
+            Document doc = Jsoup.connect(pattern.getUrl()).timeout(10000).get();
+
+            Elements entityElements = doc.select(pattern.getTagForBody());
+            for (Element entityElement : entityElements) {
+                Entity entity = new Entity();
+
+                Elements idElements = entityElement.select(pattern.getTagForEntityId());
+                if (!idElements.isEmpty()) {
+                    entity.setEntityId(idElements.get(0).attr(pattern.getAttrForEntityId()));
+                }
+
+                Elements titleElements = entityElement.select(pattern.getTagForEntityTitle());
+                if (!titleElements.isEmpty()) {
+                    if (pattern.getSelectorMethodForEntityTitle() == true) {//vere se eliminare ==
+                        entity.setEntityTitle(titleElements.text());
+                    } else {
+                        entity.setEntityTitle(titleElements.get(0).attr(pattern.getAttrForEntityTitle()));
+                    }
+                }
+
+                Elements pathElements = entityElement.select(pattern.getEntityPath());
+                if (!pathElements.isEmpty()) {
+                    entity.setPath(pathElements.get(0).attr("href"));
+                }
+                // veder come fare a convertirlo in tipo date
+                Elements lastEntityUpdateElements = entityElement.select(pattern.getLastEntityUpdate());
+                if (!lastEntityUpdateElements.isEmpty()) {
+                    entity.setLastUpdate(lastEntityUpdateElements.attr(pattern.getAttrLastEntityUpdate()));
+                }
+
+                Date d = new Date();
+                entity.setLastScraping(d);//da vedere se inserire nel controllo di inserimento
+
+                entity.setBasePath(pattern.getUrl());
+
+                entityService.create(entity);
+            }
+
+            patternService.create(pattern);
+
+        } catch (IOException ex) {
+            System.out.println("Catturata un'eccezione: \n" + ex.toString());
+        }
+
+        return "";
+
+    }
+
     //VALUTARE SE LASCIARE O TOGLIERE
     @PostMapping("/createEntity")
+    @ApiOperation(value = "",
+            response = Contact.class)
     public String create(@RequestBody Entity entity) {
         entityService.create(entity);
         return "La entity è stata creata correttamente.";
@@ -55,27 +200,48 @@ public class EntityController {
 
     //VALUTARE SE LASCIARE O TOGLIERE
     @PutMapping("/updateEntity/{id}")
-    public String updateById(@PathVariable("id") String id, @RequestBody Entity entity) {
+    @ApiOperation(value = "",
+            notes = "",
+            response = Contact.class)
+    public String updateById(@ApiParam(value = "...", required = true) @PathVariable("id") String id, @RequestBody Entity entity) {
         entityService.update(entity);
         return "La entity con id " + id + " è stata aggiornata correttamente.";
     }
 
     //VALUTARE SE LASCIARE O TOGLIERE
     @PutMapping("/updateEntity/{title}")
-    public String updateByTitle(@PathVariable("title") String title, @RequestBody Entity entity) {
+    @ApiOperation(value = "",
+            notes = "",
+            response = Contact.class)
+    public String updateByTitle(@ApiParam(value = "...", required = true) @PathVariable("title") String title, @RequestBody Entity entity) {
         entityService.update(entity);
         return "La entity \"" + title + "\" è stata aggiornata correttamente.";
     }
 
     @DeleteMapping("/deleteEntity/{id}")
-    public String deleteById(@PathVariable("id") String id) {
+    @ApiOperation(value = "",
+            notes = "",
+            response = Contact.class)
+    public String deleteById(@ApiParam(value = "...", required = true) @PathVariable("id") String id) {
         entityService.delete(id);
         return "La entity con id -> " + id + " <- è stata cancellata correttamente.";
     }
 
     @DeleteMapping("/deleteEntity/{title}")
-    public String deleteByTitle(@PathVariable("title") String title) {
+    @ApiOperation(value = "",
+            notes = "",
+            response = Contact.class)
+    public String deleteByTitle(@ApiParam(value = "...", required = true) @PathVariable("title") String title) {
         entityService.delete(title);
         return "La entity \"" + title + "\" è stata cancellata correttamente.";
+    }
+
+    //vedere se lasciare un metodo di pulizia database
+    @DeleteMapping("/deleteAllEntity}")
+    @ApiOperation(value = "",
+            response = Contact.class)
+    public String deleteAllEntity() {
+        entityService.deleteAll();
+        return "Il database e stato svuotato corettamente correttamente.";
     }
 }

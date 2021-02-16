@@ -19,47 +19,56 @@ import springfox.documentation.service.Contact;
 @RestController
 @RequestMapping("/api")
 public class PatternController {
-    
+
     @Autowired
     private PatternService patternService;
-    
+
     @GetMapping("/getAllPatterns")
-    //@ApiOperation
+    @ApiOperation(value = "",
+            response = Contact.class)
     public List<Pattern> getAll() {
         return patternService.getList();
     }
-    
+
     @GetMapping("/getPattern/{id}")
-    //@ApiOperation
+    @ApiOperation(value = "",
+            notes = "",
+            response = Contact.class)
     public Pattern getById(@ApiParam(value = "...", required = true) @PathVariable("id") String id) {
         return patternService.getById(id)
                 .orElse(null);
     }
-    
+
     @PostMapping("/createPattern")
-    //@ApiOperation
+    @ApiOperation(value = "",
+            response = Contact.class)
     public String create(@RequestBody Pattern pattern) {
         patternService.create(pattern);
         return "Pattern created succesfully.";
     }
 
     @PutMapping("/updatePattern/{id}")
-    //@ApiOperation
+    @ApiOperation(value = "",
+            notes = "",
+            response = Contact.class)
     public String updateById(@ApiParam(value = "...", required = true)
-    @PathVariable("id") String id, @RequestBody Pattern pattern) {
+            @PathVariable("id") String id, @RequestBody Pattern pattern) {
         patternService.update(pattern);
         return "Pattern " + id + " was upadate succesfully.";
     }
-    
+
     @DeleteMapping("/deletePattern/{id}")
-    //@ApiOperation
+    @ApiOperation(value = "",
+            notes = "",
+            response = Contact.class)
     public String deleteById(@ApiParam(value = "...", required = true) @PathVariable("id") String id) {
         patternService.delete(id);
         return "The pattern " + id + " was deleted succesfully";
     }
 
     @DeleteMapping("/deleteAllPatterns")
-     //@ApiOperation
+    @ApiOperation(value = "",
+            response = Contact.class)
     public String deleteAll() {
         patternService.deleteAll();
         return "All patterns was deleted succesfully.";

@@ -2,6 +2,7 @@ package com.claudiodimauro.Scrape4Engineering.api.models;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,9 +26,9 @@ public class Entity {
     @ApiModelProperty(notes = "")
     String url = basePath + path;
     @ApiModelProperty(notes = "")
-    String lastUpdate; //convert into Date type
+    String lastUpdate; //convert into Date type  da controllare come fare per convertirlo in date
     @ApiModelProperty(notes = "")
-    String lastScraping; //convert into Date type
+    Date lastScraping; //convert into Date type
     @ApiModelProperty(notes = "")
     String content;
     @ApiModelProperty(notes = "")
