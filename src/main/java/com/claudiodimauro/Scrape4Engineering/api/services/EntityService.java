@@ -20,6 +20,10 @@ public class EntityService {
     public Optional<Entity> getById(String id) {
         return entityRepository.findById(id);
     }
+    
+    public List<Entity> getByTitle(String entityTitle) {
+        return entityRepository.findByTitle(entityTitle);
+    }
 
     //SCRIVERE METODO CHE FACCIA UN CONTROLLO PER VEDERE SE L'ID DELL'ENTITA' (NON QUELLO DATO DA MONGO)
     // È GIà PRESENTE O MENO. SE È PRESENTE, AGGIORNARE

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.service.Contact;
 
@@ -49,150 +50,142 @@ public class EntityController {
                 .orElse(null);
     }
 
-    //DA SISTEMARE
-    @GetMapping("/getEntity/{title}")
-    @ApiOperation(value = "",
-            notes = "",
-            response = Contact.class)
-    public Entity getByTitle(@ApiParam(value = "...", required = true) @PathVariable("title") String title) {
-        return entityService.getById(title)
-                .orElse(null);
+    @GetMapping("/getEntityByTitle")
+    @ApiOperation(value = "", notes = "", response = Contact.class)
+    public List<Entity> getByTitle(@ApiParam(value = "...", required = true) @RequestParam(value = "entityTitle") String entityTitle) {
+        return entityService.getByTitle(entityTitle);
     }
 
     /**
      * * Cambiato da scrapeAndUpload **
      */
     @PostMapping("/scrapeByPattern")
-    @ApiOperation(value = "",
-            notes = "",
-            response = Contact.class)
-    public String scrapeByPattern(@RequestBody String id) {
+    @ApiOperation(value = "", notes = "", response = Contact.class)
+    public String scrapeByPattern(@RequestBody String patternId) {
 
         List<Pattern> patterns = patternService.getList();
         Pattern pattern = new Pattern();
         for (Pattern p : patterns) {
             String i = p.getUrl();
-            if (i.equals(id)) {
+            if (i.equals(patternId)) {
                 pattern = p;
             }
         }
 
         if (pattern.getUrl() == null) {
-            System.out.println(pattern.getUrl());
-            return "patern inesistente id:" + id;
-        }
+            System.out.println(pattern.getUrl()); //qui se il pattern è inesistente esegue lo stesso la try
+            return "Pattern inesistente.";
+        } 
+        else {
+            try {
+                Document doc = Jsoup.connect(pattern.getUrl()).timeout(10000).get();
 
-        try {
-            
-            Document doc = Jsoup.connect(pattern.getUrl()).timeout(10000).get();
+                Elements entityElements = doc.select(pattern.getTagForBody());
+                for (Element entityElement : entityElements) {
+                    Entity entity = new Entity();
 
-            Elements entityElements = doc.select(pattern.getTagForBody());
-            for (Element entityElement : entityElements) {
-                Entity entity = new Entity();
-
-                Elements idElements = entityElement.select(pattern.getTagForEntityId());
-                if (!idElements.isEmpty()) {
-                    entity.setEntityId(idElements.get(0).attr(pattern.getAttrForEntityId()));
-                }
-
-                Elements titleElements = entityElement.select(pattern.getTagForEntityTitle());
-                if (!titleElements.isEmpty()) {
-                    if (pattern.getSelectorMethodForEntityTitle() == true) {//vedere se togliere ==
-                        entity.setEntityTitle(titleElements.text());
-                    } else {
-                        entity.setEntityTitle(titleElements.get(0).attr(pattern.getAttrForEntityTitle()));
+                    Elements idElements = entityElement.select(pattern.getTagForEntityId());
+                    if (!idElements.isEmpty()) {
+                        entity.setEntityId(idElements.get(0).attr(pattern.getAttrForEntityId()));
                     }
+
+                    Elements titleElements = entityElement.select(pattern.getTagForEntityTitle());
+                    if (!titleElements.isEmpty()) {
+                        if (pattern.getSelectorMethodForEntityTitle() == true) {//vedere se togliere ==
+                            entity.setEntityTitle(titleElements.text());
+                        } else {
+                            entity.setEntityTitle(titleElements.get(0).attr(pattern.getAttrForEntityTitle()));
+                        }
+                    }
+
+                    Elements pathElements = entityElement.select(pattern.getEntityPath());
+                    if (!pathElements.isEmpty()) {
+                        entity.setPath(pathElements.get(0).attr("href"));
+                    }
+                    // veder come fare a convertirlo in tipo date
+                    Elements lastEntityUpdateElements = entityElement.select(pattern.getLastEntityUpdate());
+                    if (!lastEntityUpdateElements.isEmpty()) {
+                        entity.setLastUpdate(lastEntityUpdateElements.attr(pattern.getAttrLastEntityUpdate()));
+                    }
+
+                    Date date = new Date();
+                    entity.setLastScraping(date);//da vedere se inserire nel controllo di inserimento
+
+                    entity.setBasePath(pattern.getUrl());
+
+                    entityService.create(entity);
                 }
-
-                Elements pathElements = entityElement.select(pattern.getEntityPath());
-                if (!pathElements.isEmpty()) {
-                    entity.setPath(pathElements.get(0).attr("href"));
-                }
-                // veder come fare a convertirlo in tipo date
-                Elements lastEntityUpdateElements = entityElement.select(pattern.getLastEntityUpdate());
-                if (!lastEntityUpdateElements.isEmpty()) {
-                    entity.setLastUpdate(lastEntityUpdateElements.attr(pattern.getAttrLastEntityUpdate()));
-                }
-
-                Date d = new Date();
-                entity.setLastScraping(d);//da vedere se inserire nel controllo di inserimento
-
-                entity.setBasePath(pattern.getUrl());
-
-                entityService.create(entity);
+                return "Scraping effettuato con successo.";
+            } catch (IOException ex) {
+                System.out.println("Catturata un'eccezione: \n" + ex.toString());
             }
-
-        } catch (IOException ex) {
-            System.out.println("Catturata un'eccezione: \n" + ex.toString());
         }
 
-        return "";
+        return null;
     }
 
     @PostMapping("/scrapeWithoutPattern")
-    @ApiOperation(value = "",
-            notes = "",
-            response = Contact.class)
+    @ApiOperation(value = "", notes = "", response = Contact.class)
     public String scrapeWithoutpattern(@RequestBody Pattern pattern) {
 
+        //qui serviva una else oltre alla if
         if (pattern.getUrl() == null) {
-            return "Pattern non valido";//controllare
-        }
-        
-        try {
+            return "Pattern non valido: impossibile effettuare lo scraping.";
+        } 
+        else {
+            try {
 
-            Document doc = Jsoup.connect(pattern.getUrl()).timeout(10000).get();
+                Document doc = Jsoup.connect(pattern.getUrl()).timeout(10000).get();
 
-            Elements entityElements = doc.select(pattern.getTagForBody());
-            for (Element entityElement : entityElements) {
-                Entity entity = new Entity();
+                Elements entityElements = doc.select(pattern.getTagForBody());
+                for (Element entityElement : entityElements) {
+                    Entity entity = new Entity();
 
-                Elements idElements = entityElement.select(pattern.getTagForEntityId());
-                if (!idElements.isEmpty()) {
-                    entity.setEntityId(idElements.get(0).attr(pattern.getAttrForEntityId()));
-                }
-
-                Elements titleElements = entityElement.select(pattern.getTagForEntityTitle());
-                if (!titleElements.isEmpty()) {
-                    if (pattern.getSelectorMethodForEntityTitle() == true) {//vere se eliminare ==
-                        entity.setEntityTitle(titleElements.text());
-                    } else {
-                        entity.setEntityTitle(titleElements.get(0).attr(pattern.getAttrForEntityTitle()));
+                    Elements idElements = entityElement.select(pattern.getTagForEntityId());
+                    if (!idElements.isEmpty()) {
+                        entity.setEntityId(idElements.get(0).attr(pattern.getAttrForEntityId()));
                     }
+
+                    Elements titleElements = entityElement.select(pattern.getTagForEntityTitle());
+                    if (!titleElements.isEmpty()) {
+                        if (pattern.getSelectorMethodForEntityTitle() == true) {//vere se eliminare ==
+                            entity.setEntityTitle(titleElements.text());
+                        } else {
+                            entity.setEntityTitle(titleElements.get(0).attr(pattern.getAttrForEntityTitle()));
+                        }
+                    }
+
+                    Elements pathElements = entityElement.select(pattern.getEntityPath());
+                    if (!pathElements.isEmpty()) {
+                        entity.setPath(pathElements.get(0).attr("href"));
+                    }
+                    // veder come fare a convertirlo in tipo date
+                    Elements lastEntityUpdateElements = entityElement.select(pattern.getLastEntityUpdate());
+                    if (!lastEntityUpdateElements.isEmpty()) {
+                        entity.setLastUpdate(lastEntityUpdateElements.attr(pattern.getAttrLastEntityUpdate()));
+                    }
+
+                    Date date = new Date();
+                    entity.setLastScraping(date);//da vedere se inserire nel controllo di inserimento
+
+                    entity.setBasePath(pattern.getUrl());
+
+                    entityService.create(entity);
                 }
+                patternService.create(pattern);
 
-                Elements pathElements = entityElement.select(pattern.getEntityPath());
-                if (!pathElements.isEmpty()) {
-                    entity.setPath(pathElements.get(0).attr("href"));
-                }
-                // veder come fare a convertirlo in tipo date
-                Elements lastEntityUpdateElements = entityElement.select(pattern.getLastEntityUpdate());
-                if (!lastEntityUpdateElements.isEmpty()) {
-                    entity.setLastUpdate(lastEntityUpdateElements.attr(pattern.getAttrLastEntityUpdate()));
-                }
-
-                Date d = new Date();
-                entity.setLastScraping(d);//da vedere se inserire nel controllo di inserimento
-
-                entity.setBasePath(pattern.getUrl());
-
-                entityService.create(entity);
+                return "Scraping effettuato con successo.";
+            } catch (IOException ex) {
+                System.out.println("Catturata un'eccezione: \n" + ex.toString());
             }
-
-            patternService.create(pattern);
-
-        } catch (IOException ex) {
-            System.out.println("Catturata un'eccezione: \n" + ex.toString());
         }
 
-        return "";
-
+        return null;
     }
 
     //VALUTARE SE LASCIARE O TOGLIERE
     @PostMapping("/createEntity")
-    @ApiOperation(value = "",
-            response = Contact.class)
+    @ApiOperation(value = "", notes = "", response = Contact.class)
     public String create(@RequestBody Entity entity) {
         entityService.create(entity);
         return "La entity è stata creata correttamente.";
@@ -200,9 +193,7 @@ public class EntityController {
 
     //VALUTARE SE LASCIARE O TOGLIERE
     @PutMapping("/updateEntity/{id}")
-    @ApiOperation(value = "",
-            notes = "",
-            response = Contact.class)
+    @ApiOperation(value = "", notes = "", response = Contact.class)
     public String updateById(@ApiParam(value = "...", required = true) @PathVariable("id") String id, @RequestBody Entity entity) {
         entityService.update(entity);
         return "La entity con id " + id + " è stata aggiornata correttamente.";
@@ -210,27 +201,21 @@ public class EntityController {
 
     //VALUTARE SE LASCIARE O TOGLIERE
     @PutMapping("/updateEntity/{title}")
-    @ApiOperation(value = "",
-            notes = "",
-            response = Contact.class)
+    @ApiOperation(value = "", notes = "", response = Contact.class)
     public String updateByTitle(@ApiParam(value = "...", required = true) @PathVariable("title") String title, @RequestBody Entity entity) {
         entityService.update(entity);
         return "La entity \"" + title + "\" è stata aggiornata correttamente.";
     }
 
     @DeleteMapping("/deleteEntity/{id}")
-    @ApiOperation(value = "",
-            notes = "",
-            response = Contact.class)
+    @ApiOperation(value = "", notes = "", response = Contact.class)
     public String deleteById(@ApiParam(value = "...", required = true) @PathVariable("id") String id) {
         entityService.delete(id);
         return "La entity con id -> " + id + " <- è stata cancellata correttamente.";
     }
 
     @DeleteMapping("/deleteEntity/{title}")
-    @ApiOperation(value = "",
-            notes = "",
-            response = Contact.class)
+    @ApiOperation(value = "", notes = "", response = Contact.class)
     public String deleteByTitle(@ApiParam(value = "...", required = true) @PathVariable("title") String title) {
         entityService.delete(title);
         return "La entity \"" + title + "\" è stata cancellata correttamente.";
@@ -238,10 +223,9 @@ public class EntityController {
 
     //vedere se lasciare un metodo di pulizia database
     @DeleteMapping("/deleteAllEntity}")
-    @ApiOperation(value = "",
-            response = Contact.class)
+    @ApiOperation(value = "", notes = "", response = Contact.class)
     public String deleteAllEntity() {
         entityService.deleteAll();
-        return "Il database e stato svuotato corettamente .";
+        return "Il database è stato svuotato corettamente.";
     }
 }
