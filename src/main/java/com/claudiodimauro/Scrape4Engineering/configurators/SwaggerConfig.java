@@ -22,7 +22,7 @@ public class SwaggerConfig {
                 .select()
                 //.paths(PathSelectors.ant("/api/*/*"))
                 .paths(Predicates.not(PathSelectors.regex("/error.*")))
-                .apis(RequestHandlerSelectors.basePackage("com.claudiodimauro.Scraper4Engineering.api"))
+                .apis(RequestHandlerSelectors.basePackage("com.claudiodimauro.Scrape4Engineering"))
                 .build()
                 .apiInfo(apiDetails());
     }

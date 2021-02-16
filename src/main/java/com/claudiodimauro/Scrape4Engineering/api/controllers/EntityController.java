@@ -30,6 +30,7 @@ public class EntityController {
 
     @Autowired
     private EntityService entityService;
+    
     @Autowired
     private PatternService patternService;
 
