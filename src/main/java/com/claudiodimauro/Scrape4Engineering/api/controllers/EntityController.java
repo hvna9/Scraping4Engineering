@@ -36,16 +36,13 @@ public class EntityController {
     private PatternService patternService;
 
     @GetMapping("/getAllentities")
-    @ApiOperation(value = "",
-            response = Contact.class)//vedere se rimuover Contact.class
+    @ApiOperation(value = "", notes = "", response = Contact.class)//vedere se rimuover Contact.class
     public List<Entity> getAll() {
         return entityService.getList();
     }
 
     @GetMapping("/getEntity/{id}")
-    @ApiOperation(value = "",
-            notes = "",
-            response = Contact.class)
+    @ApiOperation(value = "", notes = "", response = Contact.class)
     public Entity getById(@ApiParam(value = "...", required = true) @PathVariable("id") String id) {
         return entityService.getById(id)
                 .orElse(null);
