@@ -29,13 +29,13 @@ public class SwaggerConfig {
 
     private ApiInfo apiDetails() {
         return new ApiInfo(
-                "Adress scrape API",
-                "API for scrape",
-                "1.1",
-                "Free to use",
-                new springfox.documentation.service.Contact("Pierpaolo Venanzio", "https://web.unisa.it", "aidç@.com"),
-                "Api license",
-                "https://web.unisa.it",
+                "Scraping4Engineering",
+                "Web Scraping Automation",
+                "v. 0.3",
+                "GNU Affero General Public License v3.0",
+                new springfox.documentation.service.Contact("Claudio S. Di Mauro, Pierpaolo Venanzio", "https://web.unisa.it", "c.dimauro10@studenti.unisa.it - p.venanzio@studenti.unisa.it"),
+                "GNU Affero General Public License v3.0",
+                "https://github.com/csdm/Scraping4Engineering/blob/master/LICENSE",
                 Collections.emptyList());
     }
 }

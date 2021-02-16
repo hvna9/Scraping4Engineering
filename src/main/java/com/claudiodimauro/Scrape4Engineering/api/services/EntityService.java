@@ -21,6 +21,9 @@ public class EntityService {
         return entityRepository.findById(id);
     }
     
+    //SCRIVERE METODO CHE FACCIA UN CONTROLLO PER VEDERE SE L'ID DELL'ENTITA' (NON QUELLO DATO DA MONGO)
+    // È GIà PRESENTE O MENO. SE È PRESENTE, AGGIORNARE
+    
     //Si valuti la possibilità di usare save al posto di insert per evitare duplicati
     public Entity create(Entity entity) {
         return entityRepository.insert(entity);

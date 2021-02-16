@@ -30,6 +30,7 @@ public class EntityController {
                 .orElse(null);
     }
 
+    //DA SISTEMARE
     @GetMapping("/getEntity/{title}")
     public Entity getByTitle(@PathVariable("title") String title) {
         return entityService.getById(title)
@@ -45,18 +46,21 @@ public class EntityController {
         return "";
     }
     
+    //VALUTARE SE LASCIARE O TOGLIERE
     @PostMapping("/createEntity")
     public String create(@RequestBody Entity entity) {
         entityService.create(entity);
         return "La entity è stata creata correttamente.";
     }
 
+    //VALUTARE SE LASCIARE O TOGLIERE
     @PutMapping("/updateEntity/{id}")
     public String updateById(@PathVariable("id") String id, @RequestBody Entity entity) {
         entityService.update(entity);
         return "La entity con id " + id + " è stata aggiornata correttamente.";
     }
 
+    //VALUTARE SE LASCIARE O TOGLIERE
     @PutMapping("/updateEntity/{title}")
     public String updateByTitle(@PathVariable("title") String title, @RequestBody Entity entity) {
         entityService.update(entity);
