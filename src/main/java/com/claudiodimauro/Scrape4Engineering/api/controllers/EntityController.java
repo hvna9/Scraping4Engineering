@@ -242,6 +242,6 @@ public class EntityController {
             response = Contact.class)
     public String deleteAllEntity() {
         entityService.deleteAll();
-        return "Il database e stato svuotato corettamente correttamente.";
+        return "Il database e stato svuotato corettamente .";
     }
 }
