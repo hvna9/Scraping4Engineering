@@ -39,7 +39,7 @@ public class EntityScraperByPattern {
         }
 
         if (pattern.getUrl() == null) {
-            return "Pattern con id: " + this.patternId +" non valido";
+            return "Pattern con id: " + patternId + " non valido";
         } else {
             try {
                 Document doc = Jsoup.connect(pattern.getUrl()).timeout(10000).get();
@@ -73,7 +73,16 @@ public class EntityScraperByPattern {
                                 // veder come fare a convertirlo in tipo date
                                 Elements lastEntityUpdateElements = entityElement.select(pattern.getLastEntityUpdate());
                                 if (!lastEntityUpdateElements.isEmpty()) {
-                                    entity.setLastUpdate(lastEntityUpdateElements.attr(pattern.getAttrLastEntityUpdate()));
+                                    try {
+                                        if (pattern.getSelectorMethodForLastEntityUpdate() == true) {//vedere se togliere ==
+
+                                            entity.setLastUpdate(lastEntityUpdateElements.text());
+                                        } else {
+                                            entity.setLastUpdate(lastEntityUpdateElements.get(0).attr(pattern.getAttrLastEntityUpdate()));
+                                        }
+                                    } catch (Exception ex) {
+                                        System.out.println(ex.toString());
+                                    }
                                 }
 
                                 Date date = new Date();

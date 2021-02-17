@@ -55,6 +55,7 @@ public class EntityController {
     @PostMapping("/scrapeByPattern")
     @ApiOperation(value = "", notes = "", response = Contact.class)
     public String scrapeByPattern(@RequestBody String patternId) throws Exception {
+        System.out.println("SIAMO QUI PRIMA DI PATTERNID: " + patternId);
         EntityScraperByPattern entityScraper = new EntityScraperByPattern(patternId, entityService, patternService);
         String stringScrap = entityScraper.startScraping();
         System.out.println("patternId: " + patternId);

@@ -43,6 +43,8 @@ public class Pattern {
     @ApiModelProperty(notes = "")
     private String lastEntityUpdate;
     @ApiModelProperty(notes = "")
+    private Boolean selectorMethodForLastEntityUpdate;//txt true or attr false
+    @ApiModelProperty(notes = "")
     private String attrLastEntityUpdate;
     @ApiModelProperty(notes = "")
     private String attrForAttachment;
