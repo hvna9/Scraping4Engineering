@@ -56,7 +56,8 @@ public class EntityController {
     @ApiOperation(value = "", notes = "", response = Contact.class)
     public String scrapeByPattern(@RequestBody String patternId) throws Exception {
         EntityScraperByPattern entityScraper = new EntityScraperByPattern(patternId, entityService, patternService);
-        entityScraper.startScraping();
+        String stringScrap = entityScraper.startScraping();
+        System.out.println("patternId: " + patternId);
         
 //        List<Pattern> patterns = patternService.getList();
 //        Pattern pattern = new Pattern();
@@ -116,7 +117,7 @@ public class EntityController {
 //            }
 //        }
 
-        return "Scraping effettuato --- FASE DI TESTING ---";
+        return "Scraping effettuato --- FASE DI TESTING ---" + stringScrap;
     }
 
     @PostMapping("/scrapeWithoutPattern")

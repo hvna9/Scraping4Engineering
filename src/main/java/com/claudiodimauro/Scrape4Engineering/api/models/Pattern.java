@@ -46,5 +46,7 @@ public class Pattern {
     private String attrLastEntityUpdate;
     @ApiModelProperty(notes = "")
     private String attrForAttachment;
+    @ApiModelProperty(notes = "")
+    private String tagForContent;
 
 }

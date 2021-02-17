@@ -24,11 +24,11 @@ public class EntityScraperByPattern {
         this.patternService = patternService;
     }
 
-    public void startScraping() throws Exception {
-        scan();
+    public String startScraping() throws Exception {
+        return scan();
     }
 
-    private void scan() throws Exception {
+    private String scan() {
         List<Pattern> patterns = patternService.getList();
         Pattern pattern = new Pattern();
         for (Pattern p : patterns) {
@@ -39,12 +39,12 @@ public class EntityScraperByPattern {
         }
 
         if (pattern.getUrl() == null) {
-            System.out.println(pattern.getUrl());
+            return "Pattern con id: " + this.patternId +" non valido";
         } else {
             try {
                 Document doc = Jsoup.connect(pattern.getUrl()).timeout(10000).get();
                 if (pattern.getHasPreScraping()) {
-                    Elements preScraping = doc.select(pattern.getTagForPreScraping());
+                    Elements preScraping = doc.select(pattern.getTagForPreScraping()); //vede 
                     int numPag = 1;
 
                     for (Element pagination : preScraping) {
@@ -80,55 +80,58 @@ public class EntityScraperByPattern {
                                 entity.setLastScraping(date);//da vedere se inserire nel controllo di inserimento
 
                                 entity.setBasePath(pattern.getUrl());
-                                
-                                if(pattern.getHaveToExplore()) {
+
+                                if (pattern.getHaveToExplore()) {
                                     // scrivere codice - SETTARE CONTENT
                                 } else {
-                                    // scrivere codice - SETTARE CONTENT
+                                    Elements contentElements = entityElement.select(pattern.getTagForContent());
+                                    if (!contentElements.isEmpty()) {
+                                        entity.setContent(contentElements.text());
+                                    }
                                 }
-                                
+
                                 //entity.setAttachmentId(entityService.findAttachments(param, param));
                                 entityService.create(entity);
                             }
                         } else {
                             try {
                                 Document doc2 = Jsoup.connect(pattern.getUrl() + pagination.attr("href")).timeout(10000).get();
-                                
+
                                 for (Element entityElement : doc2.select(pattern.getTagForBody())) {
-                                Entity entity = new Entity();
+                                    Entity entity = new Entity();
 
-                                Elements idElements = entityElement.select(pattern.getTagForEntityId());
-                                if (!idElements.isEmpty()) {
-                                    entity.setEntityId(idElements.get(0).attr(pattern.getAttrForEntityId()));
-                                }
-
-                                Elements titleElements = entityElement.select(pattern.getTagForEntityTitle());
-                                if (!titleElements.isEmpty()) {
-                                    if (pattern.getSelectorMethodForEntityTitle() == true) {//vedere se togliere ==
-                                        entity.setEntityTitle(titleElements.text());
-                                    } else {
-                                        entity.setEntityTitle(titleElements.get(0).attr(pattern.getAttrForEntityTitle()));
+                                    Elements idElements = entityElement.select(pattern.getTagForEntityId());
+                                    if (!idElements.isEmpty()) {
+                                        entity.setEntityId(idElements.get(0).attr(pattern.getAttrForEntityId()));
                                     }
+
+                                    Elements titleElements = entityElement.select(pattern.getTagForEntityTitle());
+                                    if (!titleElements.isEmpty()) {
+                                        if (pattern.getSelectorMethodForEntityTitle() == true) {//vedere se togliere ==
+                                            entity.setEntityTitle(titleElements.text());
+                                        } else {
+                                            entity.setEntityTitle(titleElements.get(0).attr(pattern.getAttrForEntityTitle()));
+                                        }
+                                    }
+
+                                    Elements pathElements = entityElement.select(pattern.getEntityPath());
+                                    if (!pathElements.isEmpty()) {
+                                        entity.setPath(pathElements.get(0).attr("href"));
+                                    }
+                                    // veder come fare a convertirlo in tipo date
+                                    Elements lastEntityUpdateElements = entityElement.select(pattern.getLastEntityUpdate());
+                                    if (!lastEntityUpdateElements.isEmpty()) {
+                                        entity.setLastUpdate(lastEntityUpdateElements.attr(pattern.getAttrLastEntityUpdate()));
+                                    }
+
+                                    Date date = new Date();
+                                    entity.setLastScraping(date);//da vedere se inserire nel controllo di inserimento
+
+                                    entity.setBasePath(pattern.getUrl());
+
+                                    //entity.setAttachmentId(entityService.findAttachments(param, param));
+                                    entityService.create(entity);
                                 }
-
-                                Elements pathElements = entityElement.select(pattern.getEntityPath());
-                                if (!pathElements.isEmpty()) {
-                                    entity.setPath(pathElements.get(0).attr("href"));
-                                }
-                                // veder come fare a convertirlo in tipo date
-                                Elements lastEntityUpdateElements = entityElement.select(pattern.getLastEntityUpdate());
-                                if (!lastEntityUpdateElements.isEmpty()) {
-                                    entity.setLastUpdate(lastEntityUpdateElements.attr(pattern.getAttrLastEntityUpdate()));
-                                }
-
-                                Date date = new Date();
-                                entity.setLastScraping(date);//da vedere se inserire nel controllo di inserimento
-
-                                entity.setBasePath(pattern.getUrl());
-
-                                //entity.setAttachmentId(entityService.findAttachments(param, param));
-                                entityService.create(entity);
-                            }
                             } catch (IOException ex) {
                                 System.out.println("Catturata un'eccezione: \n" + ex.toString());
                             }
@@ -140,5 +143,6 @@ public class EntityScraperByPattern {
                 System.out.println("Catturata un'eccezione: \n" + ex.toString());
             }
         }
+        return "Scraping effettuato con successo.";
     }
 }
