@@ -19,6 +19,14 @@ public class Pattern {
     @Id
     private String url;//id = website url
     @ApiModelProperty(notes = "")
+    private Boolean hasPreScraping; //verifica se serve il prescraping
+    @ApiModelProperty(notes = "")
+    private String tagForPreScraping; //può essere null se hasPreScraping == false
+    @ApiModelProperty(notes = "")
+    private Boolean haveToExplore; //verifica se deve entrare in un articolo (tipo ansa)
+    @ApiModelProperty(notes = "")
+    private String tagForExploring; //può essere null se haveToExplore == false
+    @ApiModelProperty(notes = "")
     private String tagForBody;
     @ApiModelProperty(notes = "")
     private String tagForEntityId;
@@ -36,5 +44,7 @@ public class Pattern {
     private String lastEntityUpdate;
     @ApiModelProperty(notes = "")
     private String attrLastEntityUpdate;
+    @ApiModelProperty(notes = "")
+    private String attrForAttachment;
 
 }

@@ -32,6 +32,6 @@ public class Entity {
     @ApiModelProperty(notes = "")
     String content;
     @ApiModelProperty(notes = "")
-    String[] attachmentId; //convert into ObjectId
+    String attachmentId; //da capire come gestire in caso di allegati multipli 
     
 }
