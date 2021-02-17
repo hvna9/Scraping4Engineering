@@ -6,6 +6,7 @@ import java.util.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @NoArgsConstructor
@@ -15,6 +16,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @ApiModel(description = "")
 public class Entity {
 
+    @Id
+    String id; //id dato da mongo -> usato solo in caso di update
     @ApiModelProperty(notes = "")
     String entityId;
     @ApiModelProperty(notes = "")

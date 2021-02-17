@@ -100,7 +100,8 @@ public class EntityScraperByPattern {
                                 }
 
                                 //entity.setAttachmentId(entityService.findAttachments(param, param));
-                                entityService.create(entity);
+                                //entityService.create(entity);
+                                entityService.updateScraping(entity, pattern.getUrl());
                             }
                         } else {
                             try {
@@ -139,7 +140,8 @@ public class EntityScraperByPattern {
                                     entity.setBasePath(pattern.getUrl());
 
                                     //entity.setAttachmentId(entityService.findAttachments(param, param));
-                                    entityService.create(entity);
+                                    entityService.create(entity); //usare scrapeUpload invece di create
+                                    
                                 }
                             } catch (IOException ex) {
                                 System.out.println("Catturata un'eccezione: \n" + ex.toString());

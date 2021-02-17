@@ -48,6 +48,12 @@ public class EntityController {
     public List<Entity> getByTitle(@ApiParam(value = "...", required = true) @RequestParam(value = "entityTitle") String entityTitle) {
         return entityService.getByTitle(entityTitle);
     }
+    
+    @GetMapping("/getByUrl")
+    @ApiOperation(value = "", notes = "", response = Contact.class)
+    public List<Entity> getByUrl(@ApiParam(value = "...", required = true) @RequestParam(value = "basePath") String basePath) {
+        return entityService.getByUrl(basePath);
+    }
 
     /**
      * * Cambiato da scrapeAndUpload **

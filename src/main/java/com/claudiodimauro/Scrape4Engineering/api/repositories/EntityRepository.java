@@ -9,4 +9,7 @@ public interface EntityRepository extends MongoRepository<Entity, String>{
     
     @Query(value = "{entityTitle:?0}")
     List<Entity> findByTitle(String entityTitle);
+    
+    @Query(value = "{basePath:?0}")
+    List<Entity> getByUrl(String basePath);
 }
