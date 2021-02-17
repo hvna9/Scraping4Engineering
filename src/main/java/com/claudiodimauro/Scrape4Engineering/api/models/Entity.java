@@ -24,7 +24,7 @@ public class Entity {
     @ApiModelProperty(notes = "")
     String path;
     @ApiModelProperty(notes = "")
-    String url = basePath + path;
+    String url = basePath + path;//non sempre si puo fare 
     @ApiModelProperty(notes = "")
     String lastUpdate; //convert into Date type  da controllare come fare per convertirlo in date
     @ApiModelProperty(notes = "")
