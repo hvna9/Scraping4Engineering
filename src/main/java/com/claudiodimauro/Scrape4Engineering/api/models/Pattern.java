@@ -2,53 +2,43 @@ package com.claudiodimauro.Scrape4Engineering.api.models;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@NoArgsConstructor
 @Getter
 @Setter
 @Document(collection = "pattern")
 @ApiModel(description = "")
 public class Pattern {
 
-    @ApiModelProperty(notes = "")
     @Id
+    @ApiModelProperty(notes = "")
     private String url;//id = website url
-    @ApiModelProperty(notes = "")
-    private Boolean hasPreScraping; //verifica se serve il prescraping
-    @ApiModelProperty(notes = "")
-    private String tagForPreScraping; //può essere null se hasPreScraping == false
-    @ApiModelProperty(notes = "")
-    private Boolean haveToExplore; //verifica se deve entrare in un articolo (tipo ansa)
-    @ApiModelProperty(notes = "")
-    private String tagForExploring; //può essere null se haveToExplore == false
     @ApiModelProperty(notes = "")
     private String tagForBody;
     @ApiModelProperty(notes = "")
-    private String tagForEntityId;
-    @ApiModelProperty(notes = "")
-    private String attrForEntityId;
-    @ApiModelProperty(notes = "")
-    private String tagForEntityTitle;
-    @ApiModelProperty(notes = "")
-    private Boolean selectorMethodForEntityTitle;//txt true or attr false
-    @ApiModelProperty(notes = "")
-    private String attrForEntityTitle;//(only to use when the method is attr)
+    private String entityId;
     @ApiModelProperty(notes = "")
     private String entityPath;//(href)
     @ApiModelProperty(notes = "")
-    private String lastEntityUpdate;
+    private String attrForEntityId;
     @ApiModelProperty(notes = "")
-    private Boolean selectorMethodForLastEntityUpdate;//txt true or attr false
+    private Boolean hasPrescraping;
     @ApiModelProperty(notes = "")
-    private String attrLastEntityUpdate;
+    private String tagForPrescraping;
     @ApiModelProperty(notes = "")
-    private String attrForAttachment;
+    private Boolean haveToExplore;
     @ApiModelProperty(notes = "")
-    private String tagForContent;
-
+    private List<PatternObject> patternObjects;
+    @ApiModelProperty(notes = "")
+    private List<PatternObject> innerPatternObjects;
+    
+    public Pattern() {
+        this.patternObjects = new ArrayList<>();
+        this.innerPatternObjects = new ArrayList<>();
+    }
 }

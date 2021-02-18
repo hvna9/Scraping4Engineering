@@ -42,12 +42,6 @@ public class EntityController {
         return entityService.getById(id)
                 .orElse(null);
     }
-
-    @GetMapping("/getEntityByTitle")
-    @ApiOperation(value = "", notes = "", response = Contact.class)
-    public List<Entity> getByTitle(@ApiParam(value = "...", required = true) @RequestParam(value = "entityTitle") String entityTitle) {
-        return entityService.getByTitle(entityTitle);
-    }
     
     @GetMapping("/getByUrl")
     @ApiOperation(value = "", notes = "", response = Contact.class)
@@ -66,64 +60,6 @@ public class EntityController {
         String stringScrap = entityScraper.startScraping();
         System.out.println("patternId: " + patternId);
         
-//        List<Pattern> patterns = patternService.getList();
-//        Pattern pattern = new Pattern();
-//        for (Pattern p : patterns) {
-//            String url = p.getUrl();
-//            if (url.equals(patternId)) {
-//                pattern = p;
-//            }
-//        }
-//
-//        if (pattern.getUrl() == null) {
-//            System.out.println(pattern.getUrl()); 
-//            return "Pattern inesistente.";
-//        } 
-//        else {
-//            try {
-//                Document doc = Jsoup.connect(pattern.getUrl()).timeout(10000).get();
-//
-//                Elements entityElements = doc.select(pattern.getTagForBody());
-//                for (Element entityElement : entityElements) {
-//                    Entity entity = new Entity();
-//
-//                    Elements idElements = entityElement.select(pattern.getTagForEntityId());
-//                    if (!idElements.isEmpty()) {
-//                        entity.setEntityId(idElements.get(0).attr(pattern.getAttrForEntityId()));
-//                    }
-//
-//                    Elements titleElements = entityElement.select(pattern.getTagForEntityTitle());
-//                    if (!titleElements.isEmpty()) {
-//                        if (pattern.getSelectorMethodForEntityTitle() == true) {//vedere se togliere ==
-//                            entity.setEntityTitle(titleElements.text());
-//                        } else {
-//                            entity.setEntityTitle(titleElements.get(0).attr(pattern.getAttrForEntityTitle()));
-//                        }
-//                    }
-//
-//                    Elements pathElements = entityElement.select(pattern.getEntityPath());
-//                    if (!pathElements.isEmpty()) {
-//                        entity.setPath(pathElements.get(0).attr("href"));
-//                    }
-//                    // veder come fare a convertirlo in tipo date
-//                    Elements lastEntityUpdateElements = entityElement.select(pattern.getLastEntityUpdate());
-//                    if (!lastEntityUpdateElements.isEmpty()) {
-//                        entity.setLastUpdate(lastEntityUpdateElements.attr(pattern.getAttrLastEntityUpdate()));
-//                    }
-//
-//                    Date date = new Date();
-//                    entity.setLastScraping(date);//da vedere se inserire nel controllo di inserimento
-//
-//                    entity.setBasePath(pattern.getUrl());
-//
-//                    entityService.create(entity);
-//                }
-//                return "Scraping effettuato con successo.";
-//            } catch (IOException ex) {
-//                System.out.println("Catturata un'eccezione: \n" + ex.toString());
-//            }
-//        }
-
         return "Scraping effettuato --- FASE DI TESTING ---" + stringScrap;
     }
 
@@ -202,26 +138,11 @@ public class EntityController {
         return "La entity con id " + id + " è stata aggiornata correttamente.";
     }
 
-    //VALUTARE SE LASCIARE O TOGLIERE
-    @PutMapping("/updateEntity/{title}")
-    @ApiOperation(value = "", notes = "", response = Contact.class)
-    public String updateByTitle(@ApiParam(value = "...", required = true) @PathVariable("title") String title, @RequestBody Entity entity) {
-        entityService.update(entity);
-        return "La entity \"" + title + "\" è stata aggiornata correttamente.";
-    }
-
     @DeleteMapping("/deleteEntity/{id}")
     @ApiOperation(value = "", notes = "", response = Contact.class)
     public String deleteById(@ApiParam(value = "...", required = true) @PathVariable("id") String id) {
         entityService.delete(id);
         return "La entity con id -> " + id + " <- è stata cancellata correttamente.";
-    }
-
-    @DeleteMapping("/deleteEntity/{title}")
-    @ApiOperation(value = "", notes = "", response = Contact.class)
-    public String deleteByTitle(@ApiParam(value = "...", required = true) @PathVariable("title") String title) {
-        entityService.delete(title);
-        return "La entity \"" + title + "\" è stata cancellata correttamente.";
     }
 
     //vedere se lasciare un metodo di pulizia database

@@ -22,10 +22,6 @@ public class EntityService {
         return entityRepository.findById(id);
     }
 
-    public List<Entity> getByTitle(String entityTitle) {
-        return entityRepository.findByTitle(entityTitle);
-    }
-
     public Entity create(Entity entity) {
         return entityRepository.insert(entity);
     }

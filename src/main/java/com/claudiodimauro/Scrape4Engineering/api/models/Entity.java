@@ -1,5 +1,7 @@
 package com.claudiodimauro.Scrape4Engineering.api.models;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
@@ -21,18 +23,21 @@ public class Entity {
     @ApiModelProperty(notes = "")
     String entityId;
     @ApiModelProperty(notes = "")
-    String entityTitle;
-    @ApiModelProperty(notes = "")
     String basePath;
     @ApiModelProperty(notes = "")
     String path;
     @ApiModelProperty(notes = "")
-    String lastUpdate; //convert into Date type  da controllare come fare per convertirlo in date
-    @ApiModelProperty(notes = "")
     Date lastScraping; //convert into Date type
     @ApiModelProperty(notes = "")
-    String content;
+    String content; //deve diventare un DBObject
     @ApiModelProperty(notes = "")
     String attachmentId; //da capire come gestire in caso di allegati multipli 
+    
+    @ApiModelProperty(notes = "")
+    DBObject entityObject = new BasicDBObject();
+    
+    public void setEntityObject(String key, String value) {
+        this.entityObject.put(key, value);
+    }
     
 }

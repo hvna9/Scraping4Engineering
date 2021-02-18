@@ -6,10 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 public interface EntityRepository extends MongoRepository<Entity, String>{
-    
-    @Query(value = "{entityTitle:?0}")
-    List<Entity> findByTitle(String entityTitle);
-    
+   
     @Query(value = "{basePath:?0}")
     List<Entity> getByUrl(String basePath);
 }
