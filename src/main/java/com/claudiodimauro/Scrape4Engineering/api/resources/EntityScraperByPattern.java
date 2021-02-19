@@ -66,6 +66,9 @@ public class EntityScraperByPattern {
                                     Document doc2 = Jsoup.connect(url + pagination.attr("href")).timeout(10000).get();
                                     paginationScrape(doc2.select(pattern.getTagForBody()), pattern);
                                 }
+                                //da vedere che fare se la condizione del if non e verificata
+                                 Document doc2 = Jsoup.connect(pagination.attr("href")).timeout(10000).get();
+                                    paginationScrape(doc2.select(pattern.getTagForBody()), pattern);
 
                             } catch (Exception ex) {
                                 System.out.println("siamo qui?????");
@@ -107,7 +110,7 @@ public class EntityScraperByPattern {
                 entity.setEntityId(idElement.get(0).attr(pattern.getAttrForEntityId()));
                 System.out.println("ID: " + idElement.get(0).attr(pattern.getAttrForEntityId()));
             }
-            
+
             //ATTUALMENTE NON FUNZIONA PERCHé NEL PATTERN ANSA NON HANNO PATH
             Elements pathElement = elem.select(pattern.getEntityPath());
             if (!pathElement.isEmpty()) {
@@ -135,8 +138,49 @@ public class EntityScraperByPattern {
             Date date = new Date();
             entity.setLastScraping(date);
             entity.setBasePath(url);
+
+//            if (pattern.getHaveToExplore()) {
+//                if (!entity.getPath().substring(0, 4).equals("http")) {
+//                    Document doc2 = Jsoup.connect(url + entity.getPath())
+//                    ).timeout(10000).get();
+//                    innerScrape(doc2.select(pattern.getTagForBody()), pattern);
+//                }
+//            }
+
             entityService.updateScraping(entity, url);
         }
+    }
+
+    private Entity innerScrape(Elements pagination, Pattern pattern, Entity entity1) throws IOException {
+
+        for (Element elem : pagination) {
+            System.out.println("SONO NEL FOR DI PAGINATION");
+            Entity entity = new Entity();
+
+            List<PatternObject> ptnObjs = pattern.getInnerPatternObjects();
+            if (!pattern.getPatternObjects().isEmpty()) {
+                for (PatternObject po : ptnObjs) {
+                    try {
+                        Elements element = elem.select(po.getTagForElementToScrape());
+                        if (!element.isEmpty()) {
+                            if (po.getMethodForElementToScrape() == true) {
+                                //da creare un posso per l inner
+                                entity.setEntityObject(po.getElementToScrape(), element.text());
+                            } else {
+                                //da creare un posso per l inner
+                                entity.setEntityObject(po.getElementToScrape(), element.get(0).attr(po.getAttrForElementToScrape()));
+                            }
+                        }
+                    } catch (Exception exe) {
+                        System.out.println("È QUI L'ERRORE?");
+                    }
+                }
+            }
+
+            //da ve dere se ritornare un DbObject da inserire in quel campo
+            //o vedere se ritornando l entity salvo le modifiche interne
+        }
+        return null;
     }
 
 }
