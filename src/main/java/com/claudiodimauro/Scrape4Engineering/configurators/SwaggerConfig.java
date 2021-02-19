@@ -31,7 +31,7 @@ public class SwaggerConfig {
         return new ApiInfo(
                 "Scraping4Engineering",
                 "Web Scraping Automation",
-                "v. 0.3",
+                "v. 0.3.1",
                 "GNU Affero General Public License v3.0",
                 new springfox.documentation.service.Contact("Claudio S. Di Mauro, Pierpaolo Venanzio", "https://web.unisa.it", "c.dimauro10@studenti.unisa.it - p.venanzio@studenti.unisa.it"),
                 "GNU Affero General Public License v3.0",

@@ -2,17 +2,28 @@ package com.claudiodimauro.Scrape4Engineering.api.services;
 
 import com.claudiodimauro.Scrape4Engineering.api.models.Entity;
 import com.claudiodimauro.Scrape4Engineering.api.repositories.EntityRepository;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class EntityService {
 
     @Autowired
     EntityRepository entityRepository;
+    
+    @Autowired
+    private GridFsTemplate gridFsTemplate; 
 
     public List<Entity> getList() {
         return entityRepository.findAll();
@@ -58,7 +69,28 @@ public class EntityService {
         return entityRepository.getByUrl(basePath);
     }
 
-    /**
-     * INSERIRE PARTE SU RETRIEVING DELLE IMMAGINI
-     */
+    public String findAttachment(String attachmentLink, String entityId) {
+        try { 
+           
+            String attachmentOriginalName = attachmentLink.substring(attachmentLink.lastIndexOf("/") + 1);
+
+            URL url = new URL(attachmentLink);
+            URLConnection connection = url.openConnection();
+            InputStream inputStream = connection.getInputStream();
+            
+            MultipartFile file = new MockMultipartFile(attachmentOriginalName, attachmentOriginalName, "file/generic", inputStream.readAllBytes());
+
+            /*** DEFINIZIONE DEI METADATA ***/
+            DBObject metadata = new BasicDBObject();
+            metadata.put("attachmentOriginalName", attachmentOriginalName);
+            metadata.put("size", file.getSize());
+            metadata.put("entityId", entityId);
+            
+            gridFsTemplate.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(), metadata);
+            return file.getOriginalFilename();
+        } catch(Exception ex) {
+            System.out.println("Impossibile connettersi.");
+        }
+        return null;
+    }
 }

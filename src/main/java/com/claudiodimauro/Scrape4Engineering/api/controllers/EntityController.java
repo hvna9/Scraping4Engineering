@@ -3,6 +3,7 @@ package com.claudiodimauro.Scrape4Engineering.api.controllers;
 import com.claudiodimauro.Scrape4Engineering.api.models.Entity;
 import com.claudiodimauro.Scrape4Engineering.api.models.Pattern;
 import com.claudiodimauro.Scrape4Engineering.api.resources.EntityScraperByPattern;
+import com.claudiodimauro.Scrape4Engineering.api.resources.EntityScraprerWithoutPattern;
 import com.claudiodimauro.Scrape4Engineering.api.services.EntityService;
 import com.claudiodimauro.Scrape4Engineering.api.services.PatternService;
 import io.swagger.annotations.ApiOperation;
@@ -49,77 +50,23 @@ public class EntityController {
         return entityService.getByUrl(basePath);
     }
 
-    /**
-     * * Cambiato da scrapeAndUpload **
-     */
     @PostMapping("/scrapeByPattern")
     @ApiOperation(value = "", notes = "", response = Contact.class)
     public String scrapeByPattern(@RequestBody String patternId) throws Exception {
-        System.out.println("SIAMO QUI PRIMA DI PATTERNID: " + patternId);
         EntityScraperByPattern entityScraper = new EntityScraperByPattern(patternId, entityService, patternService);
         String stringScrap = entityScraper.startScraping();
-        System.out.println("patternId: " + patternId);
+
         
         return "Scraping effettuato --- FASE DI TESTING ---" + stringScrap;
     }
 
     @PostMapping("/scrapeWithoutPattern")
     @ApiOperation(value = "", notes = "", response = Contact.class)
-    public String scrapeWithoutpattern(@RequestBody Pattern pattern) {
+    public String scrapeWithoutpattern(@RequestBody Pattern pattern) throws Exception {
+        EntityScraprerWithoutPattern entityScraper = new EntityScraprerWithoutPattern(pattern, entityService, patternService);
+        String stringScrap = entityScraper.startScraping();
 
-//        //qui serviva una else oltre alla if
-//        if (pattern.getUrl() == null) {
-//            return "Pattern non valido: impossibile effettuare lo scraping.";
-//        } 
-//        else {
-//            try {
-//
-//                Document doc = Jsoup.connect(pattern.getUrl()).timeout(10000).get();
-//
-//                Elements entityElements = doc.select(pattern.getTagForBody());
-//                for (Element entityElement : entityElements) {
-//                    Entity entity = new Entity();
-//
-//                    Elements idElements = entityElement.select(pattern.getTagForEntityId());
-//                    if (!idElements.isEmpty()) {
-//                        entity.setEntityId(idElements.get(0).attr(pattern.getAttrForEntityId()));
-//                    }
-//
-//                    Elements titleElements = entityElement.select(pattern.getTagForEntityTitle());
-//                    if (!titleElements.isEmpty()) {
-//                        if (pattern.getSelectorMethodForEntityTitle() == true) {//vere se eliminare ==
-//                            entity.setEntityTitle(titleElements.text());
-//                        } else {
-//                            entity.setEntityTitle(titleElements.get(0).attr(pattern.getAttrForEntityTitle()));
-//                        }
-//                    }
-//
-//                    Elements pathElements = entityElement.select(pattern.getEntityPath());
-//                    if (!pathElements.isEmpty()) {
-//                        entity.setPath(pathElements.get(0).attr("href"));
-//                    }
-//                    // veder come fare a convertirlo in tipo date
-//                    Elements lastEntityUpdateElements = entityElement.select(pattern.getLastEntityUpdate());
-//                    if (!lastEntityUpdateElements.isEmpty()) {
-//                        entity.setLastUpdate(lastEntityUpdateElements.attr(pattern.getAttrLastEntityUpdate()));
-//                    }
-//
-//                    Date date = new Date();
-//                    entity.setLastScraping(date);//da vedere se inserire nel controllo di inserimento
-//
-//                    entity.setBasePath(pattern.getUrl());
-//
-//                    entityService.create(entity);
-//                }
-//                patternService.create(pattern);
-//
-//                return "Scraping effettuato con successo.";
-//            } catch (IOException ex) {
-//                System.out.println("Catturata un'eccezione: \n" + ex.toString());
-//            }
-//        }
-
-        return "Scraping effettuato --- FASE DI TESTING ---";
+        return "Scraping effettuato --- FASE DI TESTING ---" + stringScrap;
     }
 
     //VALUTARE SE LASCIARE O TOGLIERE

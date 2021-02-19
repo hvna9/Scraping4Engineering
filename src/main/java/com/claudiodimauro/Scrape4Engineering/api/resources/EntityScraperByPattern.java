@@ -1,5 +1,6 @@
 package com.claudiodimauro.Scrape4Engineering.api.resources;
 
+import com.claudiodimauro.Scrape4Engineering.api.models.AttachmentObject;
 import com.claudiodimauro.Scrape4Engineering.api.models.Entity;
 import com.claudiodimauro.Scrape4Engineering.api.models.Pattern;
 import com.claudiodimauro.Scrape4Engineering.api.models.PatternObject;
@@ -58,20 +59,17 @@ public class EntityScraperByPattern {
                                     int i = 0, j = 0;
                                     do {
                                         j = pattern.getUrl().indexOf("/", j) + 1;
-                                        System.out.println("i: " + i + " - j: " + j);
                                         i++;
                                     } while (i <= 2);
                                     String url = pattern.getUrl().substring(0, j - 1);
 
                                     Document doc2 = Jsoup.connect(url + pagination.attr("href")).timeout(10000).get();
                                     paginationScrape(doc2.select(pattern.getTagForBody()), pattern);
-                                }
-                                //da vedere che fare se la condizione del if non e verificata
-                                 Document doc2 = Jsoup.connect(pagination.attr("href")).timeout(10000).get();
+                                } else {
+                                    Document doc2 = Jsoup.connect(pagination.attr("href")).timeout(10000).get();
                                     paginationScrape(doc2.select(pattern.getTagForBody()), pattern);
-
+                                }
                             } catch (Exception ex) {
-                                System.out.println("siamo qui?????");
                                 ex.printStackTrace();
                             }
                         }
@@ -83,7 +81,6 @@ public class EntityScraperByPattern {
                 }
 
             } catch (Exception ex) {
-                System.out.println("siamo qui?????");
                 ex.printStackTrace();
             }
         }
@@ -95,27 +92,21 @@ public class EntityScraperByPattern {
         int i = 0, j = 0;
         do {
             j = pattern.getUrl().indexOf("/", j) + 1;
-            System.out.println("i: " + i + " - j: " + j);
             i++;
         } while (i <= 2);
         String url = pattern.getUrl().substring(0, j - 1);
-        System.out.println("\n\n\n URL: " + url);
 
         for (Element elem : pagination) {
-            System.out.println("SONO NEL FOR DI PAGINATION");
             Entity entity = new Entity();
 
             Elements idElement = elem.select(pattern.getEntityId());
             if (!idElement.isEmpty()) {
                 entity.setEntityId(idElement.get(0).attr(pattern.getAttrForEntityId()));
-                System.out.println("ID: " + idElement.get(0).attr(pattern.getAttrForEntityId()));
             }
 
-            //ATTUALMENTE NON FUNZIONA PERCHé NEL PATTERN ANSA NON HANNO PATH
             Elements pathElement = elem.select(pattern.getEntityPath());
             if (!pathElement.isEmpty()) {
                 entity.setPath(pathElement.get(0).attr("href"));
-                System.out.println("ID: " + idElement.get(0).attr(pattern.getAttrForEntityId()));
             }
 
             List<PatternObject> ptnObjs = pattern.getPatternObjects();
@@ -131,32 +122,47 @@ public class EntityScraperByPattern {
                             }
                         }
                     } catch (Exception exe) {
-                        System.out.println("È QUI L'ERRORE?");
+                        System.out.println("È QUI L'ERRORE pagination?"); //da cambiare
                     }
                 }
             }
+
+            if (pattern.getHasAttachments()) {
+                if (!pattern.getAttachmentObject().isEmpty()) {
+                    for (AttachmentObject ao : pattern.getAttachmentObject()) {
+
+                        Elements element = elem.select(ao.getTagForElementToScrape());
+                        if (!element.isEmpty()) {
+                            /*Se attachmentlink inizia per http, allora attachmentLink è già il link definitivo da usare per scaricare
+                            se invece non inizia per http ha bisogno del basePath*/
+                            String attachmentLink = element.get(0).attr(ao.getAttrForElementToScrape());
+                            if (!attachmentLink.substring(0, 4).equals("http")) {
+                                entity.setAttachmentIds(entityService.findAttachment(entity.getBasePath() + attachmentLink, entity.getBasePath() + entity.getPath()));
+                            } else {
+                                entity.setAttachmentIds(entityService.findAttachment(attachmentLink, entity.getBasePath() + entity.getPath()));
+                            }
+                        }
+                    }
+                }
+            }
+            
             Date date = new Date();
             entity.setLastScraping(date);
             entity.setBasePath(url);
 
-//            if (pattern.getHaveToExplore()) {
-//                if (!entity.getPath().substring(0, 4).equals("http")) {
-//                    Document doc2 = Jsoup.connect(url + entity.getPath())
-//                    ).timeout(10000).get();
-//                    innerScrape(doc2.select(pattern.getTagForBody()), pattern);
-//                }
-//            }
-
-            entityService.updateScraping(entity, url);
+            if (pattern.getHaveToExplore()) {
+                if (!entity.getPath().substring(0, 4).equals("http")) {
+                    Document doc2 = Jsoup.connect(url + entity.getPath()).timeout(10000).get();
+                    innerScrape(doc2.select(pattern.getTagForInnerBody()), pattern, entity);
+                }
+            } else {
+                entityService.updateScraping(entity, url);
+            }
         }
     }
 
-    private Entity innerScrape(Elements pagination, Pattern pattern, Entity entity1) throws IOException {
-
+    private void innerScrape(Elements pagination, Pattern pattern, Entity entity) {
         for (Element elem : pagination) {
-            System.out.println("SONO NEL FOR DI PAGINATION");
-            Entity entity = new Entity();
-
             List<PatternObject> ptnObjs = pattern.getInnerPatternObjects();
             if (!pattern.getPatternObjects().isEmpty()) {
                 for (PatternObject po : ptnObjs) {
@@ -164,23 +170,37 @@ public class EntityScraperByPattern {
                         Elements element = elem.select(po.getTagForElementToScrape());
                         if (!element.isEmpty()) {
                             if (po.getMethodForElementToScrape() == true) {
-                                //da creare un posso per l inner
-                                entity.setEntityObject(po.getElementToScrape(), element.text());
+                                entity.setContent(po.getElementToScrape(), element.text());
                             } else {
-                                //da creare un posso per l inner
-                                entity.setEntityObject(po.getElementToScrape(), element.get(0).attr(po.getAttrForElementToScrape()));
+                                entity.setContent(po.getElementToScrape(), element.get(0).attr(po.getAttrForElementToScrape()));
                             }
                         }
                     } catch (Exception exe) {
-                        System.out.println("È QUI L'ERRORE?");
+                        System.out.println("È QUI L'ERRORE inner?"); //da cambiare
                     }
                 }
             }
 
-            //da ve dere se ritornare un DbObject da inserire in quel campo
-            //o vedere se ritornando l entity salvo le modifiche interne
+            if (pattern.getHasInnerAttachments()) {
+                if (!pattern.getAttachmentInnerObject().isEmpty()) {
+                    for (AttachmentObject ao : pattern.getAttachmentInnerObject()) {
+
+                        Elements element = elem.select(ao.getTagForElementToScrape());
+                        if (!element.isEmpty()) {
+                            /*Se attachmentlink inizia per http, allora attachmentLink è già il link definitivo da usare per scaricare
+                            se invece non inizia per http ha bisogno del basePath*/
+                            String attachmentLink = element.get(0).attr(ao.getAttrForElementToScrape());
+                            if (!attachmentLink.substring(0, 4).equals("http")) {
+                                entity.setAttachmentIds(entityService.findAttachment(entity.getBasePath() + attachmentLink, entity.getBasePath() + entity.getPath()));
+                            } else {
+                                entity.setAttachmentIds(entityService.findAttachment(attachmentLink, entity.getBasePath() + entity.getPath()));
+                            }
+                        }
+                    }
+                }
+            }
         }
-        return null;
+        entityService.updateScraping(entity, entity.getBasePath());
     }
 
 }

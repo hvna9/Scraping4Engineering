@@ -27,18 +27,30 @@ public class Pattern {
     @ApiModelProperty(notes = "")
     private String attrForEntityId;
     @ApiModelProperty(notes = "")
-    private Boolean hasPrescraping;
+    private Boolean hasPrescraping = false;
     @ApiModelProperty(notes = "")
     private String tagForPrescraping;
     @ApiModelProperty(notes = "")
-    private Boolean haveToExplore;
+    private Boolean haveToExplore = false;
     @ApiModelProperty(notes = "")
     private List<PatternObject> patternObjects;
     @ApiModelProperty(notes = "")
     private List<PatternObject> innerPatternObjects;
+    @ApiModelProperty(notes = "")
+    private String tagForInnerBody;
+    @ApiModelProperty(notes = "")
+    private Boolean hasAttachments = false;
+    @ApiModelProperty(notes = "")
+    private List<AttachmentObject> attachmentObject;
+    @ApiModelProperty(notes = "")
+    private Boolean hasInnerAttachments = false;
+    @ApiModelProperty(notes = "")
+    private List<AttachmentObject> attachmentInnerObject;
     
     public Pattern() {
         this.patternObjects = new ArrayList<>();
         this.innerPatternObjects = new ArrayList<>();
+        this.attachmentObject = new ArrayList<>();
+        this.attachmentInnerObject = new ArrayList<>();
     }
 }

@@ -10,9 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @ApiModel(description = "")
-public class PatternObject {
-    private String elementToScrape;
+public class AttachmentObject {
     private String tagForElementToScrape;
-    private Boolean methodForElementToScrape; //true -> text(), false -> attr()
-    private @Nullable String attrForElementToScrape; //è nullo se methodForElementToScrape==true
+    private String attrForElementToScrape; 
 }

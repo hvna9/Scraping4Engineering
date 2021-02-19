@@ -4,7 +4,9 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,12 +29,11 @@ public class Entity {
     @ApiModelProperty(notes = "")
     String path;
     @ApiModelProperty(notes = "")
-    Date lastScraping; //convert into Date type
+    Date lastScraping;
     @ApiModelProperty(notes = "")
-    String content; //deve diventare un DBObject
+    DBObject content = new BasicDBObject();
     @ApiModelProperty(notes = "")
-    String attachmentId; //da capire come gestire in caso di allegati multipli 
-    
+    List<String> attachmentIds = new ArrayList<>(); //contiene una lista di stringhe che rappresentano gli id di tutti gli allegati della entity
     @ApiModelProperty(notes = "")
     DBObject entityObject = new BasicDBObject();
     
@@ -40,4 +41,11 @@ public class Entity {
         this.entityObject.put(key, value);
     }
     
+    public void setContent(String key, String value) {
+        this.content.put(key, value);
+    }
+    
+    public void setAttachmentIds(String value) {
+        this.attachmentIds.add(value);
+    }
 }
