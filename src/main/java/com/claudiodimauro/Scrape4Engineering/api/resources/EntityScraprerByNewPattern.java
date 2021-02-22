@@ -14,13 +14,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class EntityScraprerWithoutPattern {
+public class EntityScraprerByNewPattern {
 
     private Pattern pattern;
     private EntityService entityService;
     private PatternService patternService;
 
-    public EntityScraprerWithoutPattern(Pattern pattern, EntityService entityService, PatternService patternService) {
+    public EntityScraprerByNewPattern(Pattern pattern, EntityService entityService, PatternService patternService) {
         this.pattern = pattern;
         this.entityService = entityService;
         this.patternService = patternService;

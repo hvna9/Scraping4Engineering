@@ -3,7 +3,7 @@ package com.claudiodimauro.Scrape4Engineering.api.controllers;
 import com.claudiodimauro.Scrape4Engineering.api.models.Entity;
 import com.claudiodimauro.Scrape4Engineering.api.models.Pattern;
 import com.claudiodimauro.Scrape4Engineering.api.resources.EntityScraperByPattern;
-import com.claudiodimauro.Scrape4Engineering.api.resources.EntityScraprerWithoutPattern;
+import com.claudiodimauro.Scrape4Engineering.api.resources.EntityScraprerByNewPattern;
 import com.claudiodimauro.Scrape4Engineering.api.services.EntityService;
 import com.claudiodimauro.Scrape4Engineering.api.services.PatternService;
 import io.swagger.annotations.ApiOperation;
@@ -32,69 +32,50 @@ public class EntityController {
     private PatternService patternService;
 
     @GetMapping("/getAllentities")
-    @ApiOperation(value = "", notes = "", response = Contact.class)//vedere se rimuover Contact.class
+    @ApiOperation(value = "Restituisce tutte le entità presenti all'interno della collection \"entities\" del DB.", notes = "Nessun parametro da passare.", response = Contact.class)
     public List<Entity> getAll() {
         return entityService.getList();
     }
 
     @GetMapping("/getEntity/{id}")
-    @ApiOperation(value = "", notes = "", response = Contact.class)
-    public Entity getById(@ApiParam(value = "...", required = true) @PathVariable("id") String id) {
+    @ApiOperation(value = "Restituisce l'entità che corrisponde all'id passato come parametro", notes = "Fornire un id valido.", response = Contact.class)
+    public Entity getById(@ApiParam(value = "È una stringa che identifica univocamente l'entità su MongoDB", required = true) @PathVariable("id") String id) {
         return entityService.getById(id)
                 .orElse(null);
     }
-    
+
     @GetMapping("/getByUrl")
-    @ApiOperation(value = "", notes = "", response = Contact.class)
-    public List<Entity> getByUrl(@ApiParam(value = "...", required = true) @RequestParam(value = "basePath") String basePath) {
+    @ApiOperation(value = "Restituisce le entità che hanno come sito di provenienza l'url passato", notes = "Fornire un url valido", response = Contact.class)
+    public List<Entity> getByUrl(@ApiParam(value = "È una stringa che identifica la sorgente di provenienza dell'elemento escluso il link alla risorsa (Es. www.sito.it)", required = true) @RequestParam(value = "basePath") String basePath) {
         return entityService.getByUrl(basePath);
     }
 
     @PostMapping("/scrapeByPattern")
-    @ApiOperation(value = "", notes = "", response = Contact.class)
-    public String scrapeByPattern(@RequestBody String patternId) throws Exception {
+    @ApiOperation(value = "Effettua lo scraping a partire da un pattern già presente sul DB, andando a salvare o aggiornare -se già presenti- le entità rilevate", notes = "Fornire un id valido per il pattern da utilizzare", response = Contact.class)
+    public String scrapeByPattern(@ApiParam(value = "È una stringa contenente l'id del pattern da usare")@RequestBody String patternId) throws Exception {
         EntityScraperByPattern entityScraper = new EntityScraperByPattern(patternId, entityService, patternService);
         String stringScrap = entityScraper.startScraping();
-
-        
-        return "Scraping effettuato --- FASE DI TESTING ---" + stringScrap;
+        return "Scraping effettuato. Risultati dello scraping: \n" + stringScrap;
     }
 
-    @PostMapping("/scrapeWithoutPattern")
-    @ApiOperation(value = "", notes = "", response = Contact.class)
-    public String scrapeWithoutpattern(@RequestBody Pattern pattern) throws Exception {
-        EntityScraprerWithoutPattern entityScraper = new EntityScraprerWithoutPattern(pattern, entityService, patternService);
-        String stringScrap = entityScraper.startScraping();
 
-        return "Scraping effettuato --- FASE DI TESTING ---" + stringScrap;
-    }
-
-    //VALUTARE SE LASCIARE O TOGLIERE
-    @PostMapping("/createEntity")
-    @ApiOperation(value = "", notes = "", response = Contact.class)
-    public String create(@RequestBody Entity entity) {
-        entityService.create(entity);
-        return "La entity è stata creata correttamente.";
-    }
-
-    //VALUTARE SE LASCIARE O TOGLIERE
-    @PutMapping("/updateEntity/{id}")
-    @ApiOperation(value = "", notes = "", response = Contact.class)
-    public String updateById(@ApiParam(value = "...", required = true) @PathVariable("id") String id, @RequestBody Entity entity) {
-        entityService.update(entity);
-        return "La entity con id " + id + " è stata aggiornata correttamente.";
+    @PostMapping("/scrapeByNewPattern")
+    @ApiOperation(value = "Effettua lo scraping a partire da un pattern fornito dall'utente e non presente sulla base dati ", notes = "Inserire un corpo in un formato JSON valido", response = Contact.class)
+    public String scrapeByNewPattern(@ApiParam(value = "È un testo in formato JSON con la struttura del pattern da usare")@RequestBody Pattern pattern) throws Exception {
+        EntityScraprerByNewPattern entityScraper = new EntityScraprerByNewPattern(pattern, entityService, patternService);
+        String stringScrap = entityScraper.startScraping(); 
+        return "Scraping effettuato. Risultati dello scraping: \n" + stringScrap;
     }
 
     @DeleteMapping("/deleteEntity/{id}")
-    @ApiOperation(value = "", notes = "", response = Contact.class)
-    public String deleteById(@ApiParam(value = "...", required = true) @PathVariable("id") String id) {
+    @ApiOperation(value = "Cancella l'entità specificata dal parametro Id", notes = "Fornire un id valido", response = Contact.class)
+    public String deleteById(@ApiParam(value = "È una stringa che identifica univocamente l'entità su MongoDB", required = true) @PathVariable("id") String id) {
         entityService.delete(id);
         return "La entity con id -> " + id + " <- è stata cancellata correttamente.";
     }
 
-    //vedere se lasciare un metodo di pulizia database
-    @DeleteMapping("/deleteAllEntity}")
-    @ApiOperation(value = "", notes = "", response = Contact.class)
+    @DeleteMapping("/deleteAllEntity")
+    @ApiOperation(value = "Cancella tutte le entità presenti sulla base dati", notes = "Nessun parametro richiesto", response = Contact.class)
     public String deleteAllEntity() {
         entityService.deleteAll();
         return "Il database è stato svuotato corettamente.";

@@ -33,13 +33,9 @@ public class EntityService {
         return entityRepository.findById(id);
     }
 
-    public Entity create(Entity entity) {
-        return entityRepository.insert(entity);
-    }
-
-    public Entity update(Entity entity) {
-        return entityRepository.save(entity);
-    }
+//    public Entity update(Entity entity) {
+//        return entityRepository.save(entity);
+//    }
 
     public Entity updateScraping(Entity entity, String url) {
         Date date = new Date(); //data attuale

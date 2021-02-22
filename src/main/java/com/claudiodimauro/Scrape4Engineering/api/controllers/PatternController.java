@@ -24,53 +24,44 @@ public class PatternController {
     private PatternService patternService;
 
     @GetMapping("/getAllPatterns")
-    @ApiOperation(value = "",
-            response = Contact.class)
+    @ApiOperation(value = "Restituisce tutti i pattern presenti sul DB", notes="Nessun parametro richiesto", response = Contact.class)
     public List<Pattern> getAll() {
         return patternService.getList();
     }
 
     @GetMapping("/getPattern/{id}")
-    @ApiOperation(value = "",
-            notes = "",
-            response = Contact.class)
-    public Pattern getById(@ApiParam(value = "...", required = true) @PathVariable("id") String id) {
+    @ApiOperation(value = "Restituisce il pattern che corrisponde all'id passato come parametro", notes = "Fornire un id valido.", response = Contact.class)
+    public Pattern getById(@ApiParam(value = "È una stringa che identifica univocamente il pattern su MongoDB", required = true) @PathVariable("id") String id) {
         return patternService.getById(id)
                 .orElse(null);
     }
 
     @PostMapping("/createPattern")
-    @ApiOperation(value = "",
-            response = Contact.class)
-    public String create(@RequestBody Pattern pattern) {
+    @ApiOperation(value = "Crea il pattern a partire da un corpo scritto in formato JSON", notes="Inserire un corpo in un formato JSON valido", response = Contact.class)
+    public String create(@ApiParam(value = "È un testo in formato JSON con la struttura del pattern da creare")@RequestBody Pattern pattern) {
         patternService.create(pattern);
-        return "Pattern created succesfully.";
+        return "Pattern creato correttamente.";
     }
 
     @PutMapping("/updatePattern/{id}")
-    @ApiOperation(value = "",
-            notes = "",
-            response = Contact.class)
-    public String updateById(@ApiParam(value = "...", required = true)
+    @ApiOperation(value = "Aggiorna il pattern che corrisponde all'id passato come parametro", notes = "Fornire un id valido.", response = Contact.class)
+    public String updateById(@ApiParam(value = "È una stringa che identifica univocamente il pattern su MongoDB", required = true)
             @PathVariable("id") String id, @RequestBody Pattern pattern) {
         patternService.update(pattern);
-        return "Pattern " + id + " was upadate succesfully.";
+        return "Il pattern " + id + " è stato aggiornato correttamente";
     }
 
     @DeleteMapping("/deletePattern/{id}")
-    @ApiOperation(value = "",
-            notes = "",
-            response = Contact.class)
-    public String deleteById(@ApiParam(value = "...", required = true) @PathVariable("id") String id) {
+    @ApiOperation(value = "Cancella il pattern specificato dal parametro Id", notes = "Fornire un id valido", response = Contact.class)
+    public String deleteById(@ApiParam(value = "È una stringa che identifica univocamente il pattern su MongoDB", required = true) @PathVariable("id") String id) {
         patternService.delete(id);
-        return "The pattern " + id + " was deleted succesfully";
+        return "Il pattern " + id + " è stato cancellato correttamente";
     }
 
     @DeleteMapping("/deleteAllPatterns")
-    @ApiOperation(value = "",
-            response = Contact.class)
+    @ApiOperation(value = "Cancella tutte le entità presenti sulla base dati", notes="Nessun parametro richiesto", response = Contact.class)
     public String deleteAll() {
         patternService.deleteAll();
-        return "All patterns was deleted succesfully.";
+        return "Tutti i pattern sono stati creati correttamente.";
     }
 }
