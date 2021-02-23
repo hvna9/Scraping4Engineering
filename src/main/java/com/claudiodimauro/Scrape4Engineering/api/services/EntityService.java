@@ -21,9 +21,9 @@ public class EntityService {
 
     @Autowired
     EntityRepository entityRepository;
-    
+
     @Autowired
-    private GridFsTemplate gridFsTemplate; 
+    private GridFsTemplate gridFsTemplate;
 
     public List<Entity> getList() {
         return entityRepository.findAll();
@@ -33,24 +33,37 @@ public class EntityService {
         return entityRepository.findById(id);
     }
 
-//    public Entity update(Entity entity) {
-//        return entityRepository.save(entity);
-//    }
+    public Entity create(Entity entity) {
+        return entityRepository.insert(entity);
+    }
+
+    public Entity update(Entity entity) {
+        return entityRepository.save(entity);
+    }
 
     public Entity updateScraping(Entity entity, String url) {
         Date date = new Date(); //data attuale
         List<Entity> entities = getByUrl(url);
-        if (entities.isEmpty()) {
-            return entityRepository.insert(entity);
-        } else {
-            for (Entity e : entities) {
-                if (e.getEntityId().equals(entity.getEntityId()) && e.getLastScraping().before(date)) {
-                    entity.setId(e.getId());
-                    return entityRepository.save(entity);
-                } 
+
+        System.out.println("Save01");
+        if (!(entity.getEntityId() == null)) {
+            if (entities.isEmpty()) {
+                System.out.println("Save02");
+                return entityRepository.insert(entity);
+            } else {
+                System.out.println("Save03");
+                for (Entity e : entities) {
+                    if (e.getEntityId().equals(entity.getEntityId()) && e.getLastScraping().before(date)) {
+                        System.out.println("Save04");
+                        entity.setId(e.getId());
+                        return entityRepository.save(entity);
+                    }
+                }
             }
+            return entityRepository.insert(entity);
         }
-        return entityRepository.insert(entity);
+
+        return null;
     }
 
     public void delete(String id) {
@@ -66,25 +79,27 @@ public class EntityService {
     }
 
     public String findAttachment(String attachmentLink, String entityId) {
-        try { 
-           
+        try {
+
             String attachmentOriginalName = attachmentLink.substring(attachmentLink.lastIndexOf("/") + 1);
 
             URL url = new URL(attachmentLink);
             URLConnection connection = url.openConnection();
             InputStream inputStream = connection.getInputStream();
-            
+
             MultipartFile file = new MockMultipartFile(attachmentOriginalName, attachmentOriginalName, "file/generic", inputStream.readAllBytes());
 
-            /*** DEFINIZIONE DEI METADATA ***/
+            /**
+             * * DEFINIZIONE DEI METADATA **
+             */
             DBObject metadata = new BasicDBObject();
             metadata.put("attachmentOriginalName", attachmentOriginalName);
             metadata.put("size", file.getSize());
             metadata.put("entityId", entityId);
-            
+
             gridFsTemplate.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(), metadata);
             return file.getOriginalFilename();
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             System.out.println("Impossibile connettersi.");
         }
         return null;
