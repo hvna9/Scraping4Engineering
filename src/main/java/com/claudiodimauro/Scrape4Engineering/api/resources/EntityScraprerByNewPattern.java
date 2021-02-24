@@ -15,6 +15,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class EntityScraprerByNewPattern {
+    private final int TIMER = 60000;//ms
 
     private Pattern pattern;
     private EntityService entityService;
@@ -40,7 +41,7 @@ public class EntityScraprerByNewPattern {
             throw new Exception("Pattern non valido");
         } else {
             try {
-                Document doc = Jsoup.connect(pattern.getUrl()).timeout(10000).get();
+                Document doc = Jsoup.connect(pattern.getUrl()).timeout(TIMER).get();
                 System.out.println("URL DI CONNESSIONE: " + pattern.getUrl());
                 System.out.println("BASE URI: " + doc.baseUri());
 
@@ -64,10 +65,10 @@ public class EntityScraprerByNewPattern {
                                     
                                     
 
-                                    Document doc2 = Jsoup.connect(url + pagination.attr("href")).timeout(10000).get();
+                                    Document doc2 = Jsoup.connect(url + pagination.attr("href")).timeout(TIMER).get();
                                     paginationScrape(doc2.select(pattern.getTagForBody()), pattern);
                                 } else {
-                                    Document doc2 = Jsoup.connect(pagination.attr("href")).timeout(10000).get();
+                                    Document doc2 = Jsoup.connect(pagination.attr("href")).timeout(TIMER).get();
                                     paginationScrape(doc2.select(pattern.getTagForBody()), pattern);
                                 }
                             } catch (Exception ex) {
@@ -151,9 +152,9 @@ public class EntityScraprerByNewPattern {
                             se invece non inizia per http ha bisogno del basePath*/
                                 String attachmentLink = element.get(0).attr(ao.getAttrForElementToScrape());
                                 if (!attachmentLink.substring(0, 4).equals("http")) {
-                                    entity.setAttachmentIds(entityService.findAttachment(entity.getBasePath() + attachmentLink, entity.getBasePath() + entity.getPath()));
+                                    entity.setAttachmentIds(entityService.findAttachment(entity.getBasePath() + attachmentLink, entity.getBasePath() + entity.getPath(), entity.getBasePath()));
                                 } else {
-                                    entity.setAttachmentIds(entityService.findAttachment(attachmentLink, entity.getBasePath() + entity.getPath()));
+                                    entity.setAttachmentIds(entityService.findAttachment(attachmentLink, entity.getBasePath() + entity.getPath(), entity.getBasePath()));
                                 }
                             }
                         }
@@ -172,12 +173,12 @@ public class EntityScraprerByNewPattern {
             if (pattern.getHaveToExplore()) {
                 System.out.println("ARRIVO QUIiiii?");
                 if (!entity.getPath().substring(0, 4).equals("http")) {
-                    Document doc2 = Jsoup.connect(url + entity.getPath()).timeout(10000).get();
+                    Document doc2 = Jsoup.connect(url + entity.getPath()).timeout(TIMER).get();
                     innerScrape(doc2.select(pattern.getTagForInnerBody()), pattern, entity);
                 } else {
                     System.out.println("ARRIVO QUI?");
                     System.out.println(entity.getPath());
-                    Document doc2 = Jsoup.connect(entity.getPath()).timeout(10000).get();
+                    Document doc2 = Jsoup.connect(entity.getPath()).timeout(TIMER).get();
                     innerScrape(doc2.select(pattern.getTagForInnerBody()), pattern, entity);
                 }
             } else {
@@ -218,9 +219,9 @@ public class EntityScraprerByNewPattern {
                             se invece non inizia per http ha bisogno del basePath*/
                                 String attachmentLink = element.get(0).attr(ao.getAttrForElementToScrape());
                                 if (!attachmentLink.substring(0, 4).equals("http")) {
-                                    entity.setAttachmentIds(entityService.findAttachment(entity.getBasePath() + attachmentLink, entity.getBasePath() + entity.getPath()));
+                                    entity.setAttachmentIds(entityService.findAttachment(entity.getBasePath() + attachmentLink, entity.getBasePath() + entity.getPath(), entity.getBasePath()));
                                 } else {
-                                    entity.setAttachmentIds(entityService.findAttachment(attachmentLink, entity.getBasePath() + entity.getPath()));
+                                    entity.setAttachmentIds(entityService.findAttachment(attachmentLink, entity.getBasePath() + entity.getPath(), entity.getBasePath()));
                                 }
                             }
                         }
