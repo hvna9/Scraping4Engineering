@@ -1,6 +1,5 @@
 package com.claudiodimauro.Scrape4Engineering.api.models;
 
-import com.mongodb.lang.Nullable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;

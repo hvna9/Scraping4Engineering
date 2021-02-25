@@ -24,7 +24,7 @@ public class PatternController {
     private PatternService patternService;
 
     @GetMapping("/getAllPatterns")
-    @ApiOperation(value = "Restituisce tutti i pattern presenti sul DB", notes="Nessun parametro richiesto", response = Contact.class)
+    @ApiOperation(value = "Restituisce tutti i pattern presenti sul DB", notes = "Nessun parametro richiesto", response = Contact.class)
     public List<Pattern> getAll() {
         return patternService.getList();
     }
@@ -37,8 +37,8 @@ public class PatternController {
     }
 
     @PostMapping("/createPattern")
-    @ApiOperation(value = "Crea il pattern a partire da un corpo scritto in formato JSON", notes="Inserire un corpo in un formato JSON valido", response = Contact.class)
-    public String create(@ApiParam(value = "È un testo in formato JSON con la struttura del pattern da creare")@RequestBody Pattern pattern) {
+    @ApiOperation(value = "Crea il pattern a partire da un corpo scritto in formato JSON", notes = "Inserire un corpo in un formato JSON valido", response = Contact.class)
+    public String create(@ApiParam(value = "È un testo in formato JSON con la struttura del pattern da creare") @RequestBody Pattern pattern) {
         patternService.create(pattern);
         return "Pattern creato correttamente.";
     }
@@ -59,7 +59,7 @@ public class PatternController {
     }
 
     @DeleteMapping("/deleteAllPatterns")
-    @ApiOperation(value = "Cancella tutte le entità presenti sulla base dati", notes="Nessun parametro richiesto", response = Contact.class)
+    @ApiOperation(value = "Cancella tutte le entità presenti sulla base dati", notes = "Nessun parametro richiesto", response = Contact.class)
     public String deleteAll() {
         patternService.deleteAll();
         return "Tutti i pattern sono stati creati correttamente.";

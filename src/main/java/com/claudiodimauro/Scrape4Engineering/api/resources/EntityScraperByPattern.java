@@ -6,16 +6,18 @@ import com.claudiodimauro.Scrape4Engineering.api.models.Pattern;
 import com.claudiodimauro.Scrape4Engineering.api.models.PatternObject;
 import com.claudiodimauro.Scrape4Engineering.api.services.EntityService;
 import com.claudiodimauro.Scrape4Engineering.api.services.PatternService;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 
 public class EntityScraperByPattern {
+    private JSONObject httpResponse = new JSONObject();
     private final int TIMER = 0;//0ms = connessione infinita
+    private int scrapedEntityCount = 0;
     
     private String patternId;
     private EntityService entityService;
@@ -42,12 +44,13 @@ public class EntityScraperByPattern {
         }
 
         if (pattern.getUrl() == null) {
+            httpResponse.put("patternFound", false);
             throw new Exception("Pattern non valido");
         } else {
+            httpResponse.put("patternFound", true);
             try {
                 Document doc = Jsoup.connect(pattern.getUrl()).timeout(TIMER).get();
-                System.out.println("URL DI CONNESSIONE: " + pattern.getUrl());
-                System.out.println("BASE URI: " + doc.baseUri());
+                httpResponse.put("mainConnectionStatus", "Succes");
 
                 if (pattern.getHasPrescraping()) {
                     Elements prescraping = doc.select(pattern.getTagForPrescraping());
@@ -58,7 +61,6 @@ public class EntityScraperByPattern {
                             paginationScrape(elem, pattern);
                         } else {
                             try {
-                                System.out.println("PAGINATION: "+ pagination.attr("href").toString());
                                 if (!pagination.attr("href").substring(0, 4).equals("http")) {
                                     int i = 0, j = 0;
                                     do {
@@ -66,17 +68,18 @@ public class EntityScraperByPattern {
                                         i++;
                                     } while (i <= 2);
                                     String url = pattern.getUrl().substring(0, j - 1);
-                                    
-                                    
 
                                     Document doc2 = Jsoup.connect(url + pagination.attr("href")).timeout(TIMER).get();
+                                    httpResponse.put("prescrapingStatus", "succes");
                                     paginationScrape(doc2.select(pattern.getTagForBody()), pattern);
                                 } else {
                                     Document doc2 = Jsoup.connect(pagination.attr("href")).timeout(TIMER).get();
+                                    httpResponse.put("prescrapingStatus", "succes");
                                     paginationScrape(doc2.select(pattern.getTagForBody()), pattern);
                                 }
                             } catch (Exception ex) {
-                                System.out.println("ERRORE 01");
+                                httpResponse.put("prescrapingStatus", "failed");
+                                System.out.println("ERRORE 02");
                                 ex.printStackTrace();
                             }
                         }
@@ -84,20 +87,20 @@ public class EntityScraperByPattern {
                     }
                 } else {
                     Elements elem = doc.select(pattern.getTagForBody());
-                    System.out.println("ERRORE tag for body\n\nELEM SIZE" + elem.size());
                     paginationScrape(elem, pattern);
-                    System.out.println("ERRORE DOPO tag for body");
                 }
 
             } catch (Exception ex) {
-                System.out.println("ERRORE 02");
+                httpResponse.put("mainConnectionStatus", "Failed");
+                System.out.println("ERRORE 01");
                 ex.printStackTrace();
             }
         }
-        return "";
+        httpResponse.put("scrapedEntities", scrapedEntityCount);
+        return httpResponse.toString(2);
     }
 
-    private void paginationScrape(Elements pagination, Pattern pattern) throws IOException {
+    private void paginationScrape(Elements pagination, Pattern pattern) throws Exception {
 
         int i = 0, j = 0;
         do {
@@ -108,6 +111,7 @@ public class EntityScraperByPattern {
 
         for (Element elem : pagination) {
             Entity entity = new Entity();
+            scrapedEntityCount++;
 
             try {
                 Elements idElement = elem.select(pattern.getEntityId());
@@ -173,21 +177,16 @@ public class EntityScraperByPattern {
             entity.setLastScraping(date);
             entity.setBasePath(url);
 
-            
             if (pattern.getHaveToExplore()) {
-                System.out.println("ARRIVO QUIiiii?");
                 if (!entity.getPath().substring(0, 4).equals("http")) {
                     Document doc2 = Jsoup.connect(url + entity.getPath()).timeout(TIMER).get();
                     innerScrape(doc2.select(pattern.getTagForInnerBody()), pattern, entity);
                 } else {
-                    System.out.println("ARRIVO QUI?");
-                    System.out.println(entity.getPath());
                     Document doc2 = Jsoup.connect(entity.getPath()).timeout(TIMER).get();
                     innerScrape(doc2.select(pattern.getTagForInnerBody()), pattern, entity);
                 }
             } else {
                 entityService.updateScraping(entity, url);
-                System.out.println("Sono uscito dalla save");
             }
         }
     }
@@ -237,7 +236,6 @@ public class EntityScraperByPattern {
                 ex.printStackTrace();
             }
             entityService.updateScraping(entity, entity.getBasePath());
-            System.out.println("Sono uscito dalla save");
         }
     }
 }

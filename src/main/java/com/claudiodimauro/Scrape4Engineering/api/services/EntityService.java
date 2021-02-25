@@ -4,13 +4,7 @@ import com.claudiodimauro.Scrape4Engineering.api.models.Entity;
 import com.claudiodimauro.Scrape4Engineering.api.repositories.EntityRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.client.gridfs.GridFSBucket;
-import com.mongodb.client.gridfs.GridFSBuckets;
-import com.mongodb.client.gridfs.GridFSFindIterable;
 import com.mongodb.client.gridfs.model.GridFSFile;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -19,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.mock.web.MockMultipartFile;
@@ -34,12 +27,15 @@ public class EntityService {
 
     @Autowired
     private GridFsTemplate gridFsTemplate;
-    
+//    
 //    @Autowired 
 //    GridFsOperations gridFsOperations;
-//    
+    
 //    @Autowired
 //    MongoConfig mongoConfig;
+//    
+//    GridFSBucket gridFsBucket;
+
     
 
     public List<Entity> getList() {
@@ -62,16 +58,12 @@ public class EntityService {
         Date date = new Date(); //data attuale
         List<Entity> entities = getByUrl(url);
 
-        System.out.println("Save01");
         if (!(entity.getEntityId() == null)) {
             if (entities.isEmpty()) {
-                System.out.println("Save02");
                 return entityRepository.insert(entity);
             } else {
-                System.out.println("Save03");
                 for (Entity e : entities) {
                     if (e.getEntityId().equals(entity.getEntityId()) && e.getLastScraping().before(date)) {
-                        System.out.println("Save04");
                         entity.setId(e.getId());
                         return entityRepository.save(entity);
                     }
@@ -129,23 +121,57 @@ public class EntityService {
         }
         return null;
     }
+}
     
     /**EVENTUALMENTE DA IMPLEMENTARE**/
     
 //    public String downloadAttachments(String fileId, String localStoragePath) {
-//        GridFSBucket gridFSBucket = GridFSBuckets.create(mongoConfig.mongoDbFactory().getDb()); 
+////        GridFSBucket gridFSBucket = GridFSBuckets.create(mongoConfig.mongoDbFactory().getMongoDatabase()); 
+////        //GridFSBucket gridFSBucket = GridFSBuckets.create(mongoConfig.mongoDbFactory().getDb(), "fs"); 
+////        GridFSFile dbFile = gridFsOperations.findOne(new Query(Criteria.where("_id").is(fileId)));
+////        
+////        try {
+////                File file = new File(localStoragePath + dbFile.getFilename());
+////                FileOutputStream streamToDownloadTo = new FileOutputStream(file);
+////                gridFSBucket.downloadToStream(dbFile.getId(), streamToDownloadTo);
+////                streamToDownloadTo.close();
+////            } catch (IOException e) {
+////                // handle exception
+////                System.out.println("error: " + e.getMessage());
+////            } 
+////        
+//
+//
+//
+//System.out.println("ARRIVO QUIIIII FS");
+//
+//final String dbURI = "mongodb://root:pippo@localhost:27017";
+//
+//        MongoClient mongoClient = new MongoClient(new MongoClientURI(dbURI));
+//        MongoDatabase database = mongoClient.getDatabase("Scraping4Engineering");
+//        
+//        System.out.println("E QUIIIII FS ASDNKASDJAKSJDAKSDJNA");
+//
+//        GridFSBucket gridFSBucket = GridFSBuckets.create(database);
+//        gridFSBucket.
+//        
+//        
 //        GridFSFile dbFile = gridFsOperations.findOne(new Query(Criteria.where("_id").is(fileId)));
 //        
-//        try {
-//                File file = new File(localStoragePath + dbFile.getFilename());
-//                FileOutputStream streamToDownloadTo = new FileOutputStream(file);
-//                gridFSBucket.downloadToStream(dbFile.getId(), streamToDownloadTo);
-//                streamToDownloadTo.close();
-//            } catch (IOException e) {
-//                // handle exception
-//                System.out.println("error: " + e.getMessage());
-//            } 
+//        System.out.println("E QUIIIII FS");
 //        
-//        return null;
+//        try {
+//            FileOutputStream streamToDownloadTo = new FileOutputStream(localStoragePath + dbFile.getFilename());
+//            gridFSBucket.downloadToStream(dbFile.getFilename() /*<- original filename*/, streamToDownloadTo);
+//            System.out.println("100000000");
+//            streamToDownloadTo.close();
+//            System.out.println("222222222");
+//        } catch (IOException ex) {
+//            System.out.println("\n\nFILE NON TROVATO! -> " + ex.toString());
+//        } finally {
+//            mongoClient.close();
+//        }
+//        return "hai rotto il cazzo gridfs";
 //    }
-}
+//
+//}
