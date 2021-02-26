@@ -18,25 +18,25 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Setter
 @Document(collection = "entities")
-@ApiModel(description = "È la componente che modella le informazioni ottenute dalle sorgenti Web.")
+@ApiModel(description = "It is the component that models the information obtained from web sources.")
 public class Entity {
 
     @Id
-    @ApiModelProperty(notes = "Identificativo assegnato da MongoDB. Viene utilizzato solo in caso di update")
+    @ApiModelProperty(notes = "Identifier assigned by MongoDB. It is only used in the event of an update")
     private String id; 
-    @ApiModelProperty(notes = "È una stringa con cui identificare l'entità trovata. Possono esserci più entità con questo stesso id. In combinazione con basePath identifica univocamente la risorsa sul DB.")
+    @ApiModelProperty(notes = "It is a string with which to identify the entity found. There can be multiple entities with this same id. In combination with basePath it uniquely identifies the resource on the DB.")
     private String entityId;
-    @ApiModelProperty(notes = "È l'indirizzo base della sorgente (www.sito.it)")
+    @ApiModelProperty(notes = "It is the base address of the source (www.sito.it)")
     private String basePath;
-    @ApiModelProperty(notes = "È il path della risorsa sul server (/risorsa/index.html). Unito al basePath restituisce il link completo alla risorsa.")
+    @ApiModelProperty(notes = "It is the path of the resource on the server (/resource/index.html). Combined with basePath, it returns the complete link to the resource.")
     private String path;
-    @ApiModelProperty(notes = "È la data di quando è stato effettuato lo scraping.")
+    @ApiModelProperty(notes = "This is the date when the scraping was performed.")
     private Date lastScraping;
-    @ApiModelProperty(notes = "È un DBObject assimilabile ad un JSON con struttura key-value, che contiene tutti gli elementi salienti estratti come contenuto centrale della entità.")
+    @ApiModelProperty(notes = "It is a DBObject similar to a JSON with key-value structure, which contains all the salient elements extracted as central content of the entity.")
     private DBObject content = new BasicDBObject();
-    @ApiModelProperty(notes = "Contiene una lista di stringhe che rappresentano gli id di tutti gli allegati della entity.")
+    @ApiModelProperty(notes = "Contains a list of strings representing the ids of all the entity's attachments.")
     private List<ObjectId> attachmentIds = new ArrayList<>();
-    @ApiModelProperty(notes = "Rappresenta tutte le informazioni supplementari per l'entità di interesse (Es. titolo)")
+    @ApiModelProperty(notes = "Represents all additional information for the entity of interest (e.g. title)")
     private DBObject entityObject = new BasicDBObject();
     
     public void setEntityObject(String key, String value) {

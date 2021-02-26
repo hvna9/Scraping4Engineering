@@ -41,7 +41,7 @@ public class EntityScraprerByNewPattern {
     private String scan() throws Exception {
         if (pattern.getPatternName() == null) {
             httpResponse.put("patternFound", false);
-            throw new Exception("Pattern non valido");
+            throw new Exception("Invalid pattern.");
         } else {
             httpResponse.put("patternFound", true);
             try {
@@ -202,7 +202,7 @@ public class EntityScraprerByNewPattern {
                             }
                         }
                     } catch (Exception exe) {
-                        System.out.println("ERRORE 05"); //da cambiare
+                        System.out.println("ERRORE 05");
                     }
                 }
             }

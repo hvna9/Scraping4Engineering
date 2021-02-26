@@ -9,10 +9,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@ApiModel(description = "Componente per effettuare lo scraping degli allegati associati alle entità")
+@ApiModel(description = "Component for scraping attachments associated with entities.")
 public class AttachmentObject {
-    @ApiModelProperty(notes = "Rappresenta il tag HTML contente le informazioni di interesse (un allegato)")
+    @ApiModelProperty(notes = "Represents the HTML tag containing the information of interest (an attachment).")
     private String tagForElementToScrape;
-    @ApiModelProperty(notes = "Rappresenta una stringa il cui contenuto rappresenta l'attributo del tag che contiene l'allegato")
+    @ApiModelProperty(notes = "Represents a string whose content represents the attribute of the tag that contains the attachment.")
     private String attrForElementToScrape; 
 }

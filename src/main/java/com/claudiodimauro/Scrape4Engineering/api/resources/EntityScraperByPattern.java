@@ -45,7 +45,7 @@ public class EntityScraperByPattern {
 
         if (pattern.getPatternName() == null) {
             httpResponse.put("patternFounded", false);
-            throw new Exception("Pattern non valido");
+            throw new Exception("Invalid pattern");
         } else {
             httpResponse.put("patternFound", true);
             try {

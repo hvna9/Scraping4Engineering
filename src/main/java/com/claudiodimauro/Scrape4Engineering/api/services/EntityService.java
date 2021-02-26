@@ -14,7 +14,6 @@ import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import javax.servlet.http.HttpServletResponse;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -55,7 +54,7 @@ public class EntityService {
     }
 
     public Entity updateScraping(Entity entity, String url) {
-        Date date = new Date(); //data attuale
+        Date date = new Date(); //actual date
         List<Entity> entities = getByUrl(url);
 
         if (!(entity.getEntityId() == null)) {
@@ -98,9 +97,8 @@ public class EntityService {
 
             MultipartFile file = new MockMultipartFile(attachmentOriginalName, attachmentOriginalName, "file/generic", inputStream.readAllBytes());
 
-            /**
-             * * DEFINIZIONE DEI METADATA **
-             */
+            
+            //METADATA DEFINITION 
             DBObject metadata = new BasicDBObject();
             metadata.put("attachmentOriginalName", attachmentOriginalName);
             metadata.put("size", file.getSize());
@@ -111,7 +109,7 @@ public class EntityService {
             return gridFsTemplate.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(), metadata);
             
         } catch (Exception ex) {
-            System.out.println("Impossibile connettersi.");
+            System.out.println("Impossible to connect.");
         }
         return null;
     }

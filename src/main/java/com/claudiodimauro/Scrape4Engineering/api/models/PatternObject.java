@@ -10,16 +10,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@ApiModel(description = "Componente per effettuare lo scraping degli elementi di cui effettivamente si ha interesse")
+@ApiModel(description = "Component for scraping the elements of which you are actually interested.")
 public class PatternObject {
     
     
-    @ApiModelProperty(notes ="Rappresenta la key su cui verrà mappato l'elemento nel JSON finale che rappresenta l'entità")
+    @ApiModelProperty(notes ="Represents the key to which the element will be mapped in the final JSON representing the entity.")
     private String elementToScrape;
-    @ApiModelProperty(notes = "Rappresenta il tag HTML contente le informazioni di interesse (un testo). Tutto quello estratto tramite questo tag verrà inserito nel campo value del JSON finale che rappresenta l'entità")
+    @ApiModelProperty(notes = "Represents the HTML tag containing the information of interest (a text). Anything extracted through this tag will be inserted into the value field of the final JSON representing the entity.")
     private String tagForElementToScrape;
-    @ApiModelProperty(notes = "Specifica il metodo JSoup da utilizzare per effettuare lo scraping. Se true effettua l'utilizzo del metodo text(); se false utilizza il metodo attr(String s).")
+    @ApiModelProperty(notes = "Specifies the JSoup method to use for scraping. If true, use the text () method; if false, use the attr (String s) method.")
     private Boolean methodForElementToScrape; 
-    @ApiModelProperty(notes = "È una stringa il cui contenuto rappresenta l'attributo da utilizzare per lo scraping. È null se methodForElementToScrape == true")
+    @ApiModelProperty(notes = "It is a string whose content represents the attribute to be used for scraping. It is null if methodForElementToScrape == true.")
     private @Nullable String attrForElementToScrape; //è nullo se methodForElementToScrape==true
 }
