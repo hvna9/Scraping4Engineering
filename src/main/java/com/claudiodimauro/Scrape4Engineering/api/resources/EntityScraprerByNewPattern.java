@@ -39,7 +39,7 @@ public class EntityScraprerByNewPattern {
     }
 
     private String scan() throws Exception {
-        if (pattern.getUrl() == null) {
+        if (pattern.getPatternName() == null) {
             httpResponse.put("patternFound", false);
             throw new Exception("Pattern non valido");
         } else {

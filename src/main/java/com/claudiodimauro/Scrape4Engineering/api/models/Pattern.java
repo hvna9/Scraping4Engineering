@@ -16,7 +16,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Pattern {
 
     @Id
-    @ApiModelProperty(notes = "È l'indirizzo della pagina da cui si vogliono ottenere le informazioni. Viene usato come Id perché verosimilmente sarà univoco.")
+    @ApiModelProperty(notes = "È un nome che serve ad identificare univocamente il pattern. Viene usato come Id su mongo. Un pattern con lo stesso nome di uno già presente genererà l'aggiornamento di quest'ultimo.")
+    private String patternName;
+    @ApiModelProperty(notes = "È l'indirizzo della pagina da cui si vogliono ottenere le informazioni.")
     private String url;//id = website url
     @ApiModelProperty(notes = "Rappresenta il tag centrale del DOM HTML tramite cui isolare le informazioni di interesse.")
     private String tagForBody;

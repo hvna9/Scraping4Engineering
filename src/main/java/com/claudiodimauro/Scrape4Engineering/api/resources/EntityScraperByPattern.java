@@ -19,12 +19,12 @@ public class EntityScraperByPattern {
     private final int TIMER = 0;//0ms = connessione infinita
     private int scrapedEntityCount = 0;
     
-    private String patternId;
+    private String patternName;
     private EntityService entityService;
     private PatternService patternService;
 
-    public EntityScraperByPattern(String patternId, EntityService entityService, PatternService patternService) {
-        this.patternId = patternId;
+    public EntityScraperByPattern(String patternName, EntityService entityService, PatternService patternService) {
+        this.patternName = patternName;
         this.entityService = entityService;
         this.patternService = patternService;
     }
@@ -37,14 +37,14 @@ public class EntityScraperByPattern {
         List<Pattern> patterns = patternService.getList();
         Pattern pattern = new Pattern();
         for (Pattern p : patterns) {
-            String url = p.getUrl();
-            if (url.equals(patternId)) {
+            String name = p.getPatternName();
+            if (name.equals(patternName)) {
                 pattern = p;
             }
         }
 
-        if (pattern.getUrl() == null) {
-            httpResponse.put("patternFound", false);
+        if (pattern.getPatternName() == null) {
+            httpResponse.put("patternFounded", false);
             throw new Exception("Pattern non valido");
         } else {
             httpResponse.put("patternFound", true);

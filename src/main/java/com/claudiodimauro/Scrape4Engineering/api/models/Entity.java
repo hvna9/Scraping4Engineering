@@ -10,6 +10,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -34,7 +35,7 @@ public class Entity {
     @ApiModelProperty(notes = "È un DBObject assimilabile ad un JSON con struttura key-value, che contiene tutti gli elementi salienti estratti come contenuto centrale della entità.")
     private DBObject content = new BasicDBObject();
     @ApiModelProperty(notes = "Contiene una lista di stringhe che rappresentano gli id di tutti gli allegati della entity.")
-    private List<String> attachmentIds = new ArrayList<>();
+    private List<ObjectId> attachmentIds = new ArrayList<>();
     @ApiModelProperty(notes = "Rappresenta tutte le informazioni supplementari per l'entità di interesse (Es. titolo)")
     private DBObject entityObject = new BasicDBObject();
     
@@ -46,7 +47,7 @@ public class Entity {
         this.content.put(key, value);
     }
     
-    public void setAttachmentIds(String value) {
+    public void setAttachmentIds(ObjectId value) {
         this.attachmentIds.add(value);
     }
 }

@@ -9,7 +9,9 @@ import com.claudiodimauro.Scrape4Engineering.api.services.PatternService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.util.List;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -77,9 +79,18 @@ public class EntityController {
         entityService.delete(id);
         return "La entity con id -> " + id + " <- è stata cancellata correttamente.";
     }
-//    @GetMapping("/download/{id}")
-//    public String download(@PathVariable("id") String id) {
-//        entityService.downloadAttachments(id, "/Users/claudiodimauro/Desktop/fileSalvatiDaDB/");
-//        return "La salvataggio ok";
-//    }
+    
+    //vedere quali parametri richiedere
+    @PostMapping("/downloadAttachment/{id}")
+    public String downloadAttachment(@ApiParam(value = "...", required = true) @PathVariable("id")
+                                     String id, @RequestBody String downloadPath) throws Exception {
+        
+        return entityService.downloadAttachment(id, downloadPath);
+    }
+    
+    @GetMapping("/showAttachment/{id}")
+    public void showAttachment(@ApiParam(value = "...", required = true) @PathVariable("id") String id, HttpServletResponse response) throws Exception {
+ 
+        FileCopyUtils.copy(entityService.showAttachment(id), response.getOutputStream());
+    }
 }
