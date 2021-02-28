@@ -29,13 +29,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class EntityService {
 
     @Autowired
-    EntityRepository entityRepository;
+    private EntityRepository entityRepository;
 
     @Autowired
     private GridFsTemplate gridFsTemplate;
     
     @Autowired 
-    GridFsOperations gridFsOperations;
+    private GridFsOperations gridFsOperations;
 
     public List<Entity> getList() {
         return entityRepository.findAll();

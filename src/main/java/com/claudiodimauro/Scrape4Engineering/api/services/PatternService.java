@@ -9,13 +9,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PatternService {
+
     @Autowired
     private PatternRepository patternnRepository;
-    
-    public List<Pattern> getList(){
+
+    public List<Pattern> getList() {
         return patternnRepository.findAll();
     }
-    
+
     public Optional<Pattern> getById(String id) {
         return patternnRepository.findById(id);
     }
@@ -26,6 +27,10 @@ public class PatternService {
 
     public Pattern update(Pattern pattern) {
         return patternnRepository.save(pattern);
+    }
+
+    public boolean patternExist(String id) {
+        return patternnRepository.existsById(id);
     }
 
     public void delete(String id) {

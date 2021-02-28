@@ -36,7 +36,7 @@ public class PatternController {
                 .orElse(null);
     }
 
-    @PostMapping("/createPattern") 
+    @PostMapping("/createPattern")
     @ApiOperation(value = "It's create a pattern starting from a body on JSON file.", notes = "Insert a body in a valid JSON format.", response = Contact.class)
     public String create(@ApiParam(value = "Is a JSON format text that contains the structure of the pattern you want to create.") @RequestBody Pattern pattern) {
         patternService.create(pattern);
@@ -47,8 +47,13 @@ public class PatternController {
     @ApiOperation(value = "Updates the pattern corrisponding to provided id.", notes = "Provides for a valid id.", response = Contact.class)
     public String updateById(@ApiParam(value = "It's a string that uniquely identify the pattern on MongoDB.", required = true)
             @PathVariable("id") String id, @RequestBody Pattern pattern) {
-        patternService.update(pattern);
-        return "The pattern " + id + " was succesfully updated.";
+        if (patternService.patternExist(id)) {
+            patternService.update(pattern);
+            return "The pattern " + id + " was succesfully updated.";
+
+        } else {
+            return "The pattern " + id + " wasn't found .";
+        }
     }
 
     @DeleteMapping("/deletePattern/{id}")
