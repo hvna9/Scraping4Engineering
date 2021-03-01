@@ -39,20 +39,23 @@ public class PatternController {
     @PostMapping("/createPattern")
     @ApiOperation(value = "It's create a pattern starting from a body on JSON file.", notes = "Insert a body in a valid JSON format.", response = Contact.class)
     public String create(@ApiParam(value = "Is a JSON format text that contains the structure of the pattern you want to create.") @RequestBody Pattern pattern) {
-        patternService.create(pattern);
-        return "Pattern succesfully created.";
+        if (patternService.patternExists(pattern.getPatternName())) {
+            return "Pattern alredy exists";
+        } else {
+            patternService.create(pattern);
+            return "Pattern succesfully created.";
+        }
     }
 
     @PutMapping("/updatePattern/{id}")
     @ApiOperation(value = "Updates the pattern corrisponding to provided id.", notes = "Provides for a valid id.", response = Contact.class)
     public String updateById(@ApiParam(value = "It's a string that uniquely identify the pattern on MongoDB.", required = true)
             @PathVariable("id") String id, @RequestBody Pattern pattern) {
-        if (patternService.patternExist(id)) {
+        if (patternService.patternExists(id)) {
             patternService.update(pattern);
             return "The pattern " + id + " was succesfully updated.";
-
         } else {
-            return "The pattern " + id + " wasn't found .";
+            return "The pattern " + id + " wasn't found.";
         }
     }
 

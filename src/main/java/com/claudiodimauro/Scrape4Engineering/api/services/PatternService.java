@@ -29,7 +29,7 @@ public class PatternService {
         return patternnRepository.save(pattern);
     }
 
-    public boolean patternExist(String id) {
+    public boolean patternExists(String id) {
         return patternnRepository.existsById(id);
     }
 
