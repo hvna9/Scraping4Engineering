@@ -40,7 +40,7 @@ public class PatternController {
     @ApiOperation(value = "It's create a pattern starting from a body on JSON file.", notes = "Insert a body in a valid JSON format.", response = Contact.class)
     public String create(@ApiParam(value = "Is a JSON format text that contains the structure of the pattern you want to create.") @RequestBody Pattern pattern) {
         if (patternService.patternExists(pattern.getPatternName())) {
-            return "Pattern alredy exists";
+            return "Pattern already exists";
         } else {
             patternService.create(pattern);
             return "Pattern succesfully created.";
@@ -67,7 +67,7 @@ public class PatternController {
     }
 
     @DeleteMapping("/deleteAllPatterns")
-    @ApiOperation(value = "It Deletes all patterns on database.", notes = "No params needed.", response = Contact.class)
+    @ApiOperation(value = "It deletes all patterns on database.", notes = "No params needed.", response = Contact.class)
     public String deleteAll() {
         patternService.deleteAll();
         return "All patterns was succesfully deleted.";

@@ -46,7 +46,7 @@ public class EntityScraprerByNewPattern {
             httpResponse.put("patternFound", true);
             try {
                 Document doc = Jsoup.connect(pattern.getUrl()).timeout(TIMER).get();
-                httpResponse.put("mainConnectionStatus", "Succes");
+                httpResponse.put("mainConnectionStatus", "success");
 
                 if (pattern.getHasPrescraping()) {
                     Elements prescraping = doc.select(pattern.getTagForPrescraping());
@@ -66,15 +66,15 @@ public class EntityScraprerByNewPattern {
                                     String url = pattern.getUrl().substring(0, j - 1);
 
                                     Document doc2 = Jsoup.connect(url + pagination.attr("href")).timeout(TIMER).get();
-                                    httpResponse.put("prescrapingStatus", "succes");
+                                    httpResponse.put("prescrapingStatus", "Success");
                                     paginationScrape(doc2.select(pattern.getTagForBody()), pattern);
                                 } else {
                                     Document doc2 = Jsoup.connect(pagination.attr("href")).timeout(TIMER).get();
-                                    httpResponse.put("prescrapingStatus", "succes");
+                                    httpResponse.put("prescrapingStatus", "Success");
                                     paginationScrape(doc2.select(pattern.getTagForBody()), pattern);
                                 }
                             } catch (Exception ex) {
-                                httpResponse.put("prescrapingStatus", "failed");
+                                httpResponse.put("prescrapingStatus", "Failed");
                                 System.out.println("ERRORE 02");
                                 ex.printStackTrace();
                             }
