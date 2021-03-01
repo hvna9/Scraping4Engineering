@@ -51,7 +51,6 @@ public class EntityScraperByPattern {
             try {
                 Document doc = Jsoup.connect(pattern.getUrl()).timeout(TIMER).get();
                 httpResponse.put("mainConnectionStatus", "Success");
-                httpResponse.put("mainConnectionStatus", "success");
 
                 if (pattern.getHasPrescraping()) {
                     Elements prescraping = doc.select(pattern.getTagForPrescraping());
@@ -72,12 +71,10 @@ public class EntityScraperByPattern {
 
                                     Document doc2 = Jsoup.connect(url + pagination.attr("href")).timeout(TIMER).get();
                                     httpResponse.put("prescrapingStatus", "Success");
-                                    httpResponse.put("prescrapingStatus", "success");
                                     paginationScrape(doc2.select(pattern.getTagForBody()), pattern);
                                 } else {
                                     Document doc2 = Jsoup.connect(pagination.attr("href")).timeout(TIMER).get();
                                     httpResponse.put("prescrapingStatus", "Success");
-                                    httpResponse.put("prescrapingStatus", "success");
                                     paginationScrape(doc2.select(pattern.getTagForBody()), pattern);
                                 }
                             } catch (Exception ex) {

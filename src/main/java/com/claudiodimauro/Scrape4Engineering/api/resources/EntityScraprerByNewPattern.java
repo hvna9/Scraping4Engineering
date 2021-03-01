@@ -46,7 +46,7 @@ public class EntityScraprerByNewPattern {
             httpResponse.put("patternFound", true);
             try {
                 Document doc = Jsoup.connect(pattern.getUrl()).timeout(TIMER).get();
-                httpResponse.put("mainConnectionStatus", "success");
+                httpResponse.put("mainConnectionStatus", "Success");
 
                 if (pattern.getHasPrescraping()) {
                     Elements prescraping = doc.select(pattern.getTagForPrescraping());
