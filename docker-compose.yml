@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+    newMongoDB:
+        image: mongo:latest
+        container_name: newMongoDB
+        ports:
+            - 27017:27017
+    scrape4engineering:
+        image: scrape4engineering:v0.0.3
+        container_name: scrape4engineering
+        ports:
+            - 8080:8080
+        links:
+            - newMongoDB
