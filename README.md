@@ -7,3 +7,6 @@ The project plans to get some data from Web pages and store them into MedITech's
 
 ### Other informations
 A project developed by Claudio S. Di Mauro & Pierpaolo Venanzio.
+
+### Docker image
+Download the Docker image at https://hub.docker.com/r/havana9/scrape4engineering
