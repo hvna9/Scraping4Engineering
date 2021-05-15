@@ -1,0 +1,174 @@
+{
+    "patternName": "hub01",
+    "url": "https://s3platform.jrc.ec.europa.eu/digital-innovation-hubs-tool?p_p_id=digitalinnovationhub_WAR_digitalinnovationhubportlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_count=1&_digitalinnovationhub_WAR_digitalinnovationhubportlet_cur=1&_digitalinnovationhub_WAR_digitalinnovationhubportlet_orderByCol=Hub%20Name&_digitalinnovationhub_WAR_digitalinnovationhubportlet_orderByType=asc&formDate=1613580523507&freeSearch=&countries=11&evolStages=1&evolStages=3&evolStages=5&h2020=true&h2020Checkbox=true",
+    "tagForBody": "table.table.table-condensed tbody tr",
+    "entityId": "td.table-cell.first a",
+    "entityPath": "td.table-cell.first a",
+    "attrForEntityId": "href",
+    "hasPrescraping": false,
+    "tagForPrescraping": null,
+    "haveToExplore": true,
+    "patternObjects": [
+      {
+        "elementToScrape": "hubName",
+        "tagForElementToScrape": "td.table-cell.first.table-sortable-column a",
+        "methodForElementToScrape": true,
+        "attrForElementToScrape": null
+      },
+        {
+        "elementToScrape": "hubWebsite",
+        "tagForElementToScrape": "td.table-cell.last a",
+        "methodForElementToScrape": false,
+        "attrForElementToScrape": "href"
+      }
+    ],
+    "innerPatternObjects": [
+      {
+        "elementToScrape": "hubContact",
+        "tagForElementToScrape": "div.hubCardContent.span6",
+        "methodForElementToScrape": true,
+        "attrForElementToScrape": null
+      }
+    ],
+    "tagForInnerBody": "div.row-fluid.hubDetail",
+    "hasAttachments": false,
+    "attachmentObject": [],
+    "hasInnerAttachments": false,
+    "attachmentInnerObject": []
+  }
+
+
+/***************************/
+
+
+{
+    "patternName": "hub02",
+    "url": "https://s3platform.jrc.ec.europa.eu/digital-innovation-hubs-tool?p_p_id=digitalinnovationhub_WAR_digitalinnovationhubportlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_count=1&_digitalinnovationhub_WAR_digitalinnovationhubportlet_cur=2&_digitalinnovationhub_WAR_digitalinnovationhubportlet_orderByCol=Hub%20Name&_digitalinnovationhub_WAR_digitalinnovationhubportlet_orderByType=asc&formDate=1614104791116&freeSearch=&countries=11&evolStages=1&evolStages=3&evolStages=5&h2020=true&h2020Checkbox=true",
+    "tagForBody": "table.table.table-condensed tbody tr",
+    "entityId": "td.table-cell.first a",
+    "entityPath": "td.table-cell.first a",
+    "attrForEntityId": "href",
+    "hasPrescraping": false,
+    "tagForPrescraping": null,
+    "haveToExplore": true,
+    "patternObjects": [
+      {
+        "elementToScrape": "hubName",
+        "tagForElementToScrape": "td.table-cell.first.table-sortable-column a",
+        "methodForElementToScrape": true,
+        "attrForElementToScrape": null
+      },
+        {
+        "elementToScrape": "hubWebsite",
+        "tagForElementToScrape": "td.table-cell.last a",
+        "methodForElementToScrape": false,
+        "attrForElementToScrape": "href"
+      }
+    ],
+    "innerPatternObjects": [
+      {
+        "elementToScrape": "hubContact",
+        "tagForElementToScrape": "div.hubCardContent.span6",
+        "methodForElementToScrape": true,
+        "attrForElementToScrape": null
+      }
+    ],
+    "tagForInnerBody": "div.row-fluid.hubDetail",
+    "hasAttachments": false,
+    "attachmentObject": [],
+    "hasInnerAttachments": false,
+    "attachmentInnerObject": []
+  }
+
+
+/***************************/
+
+{
+    "patternName": "ansa_cronaca_news",
+    "url": "https://www.ansa.it/sito/notizie/cronaca/index.shtml",
+    "tagForBody": "div.container section article header",
+    "entityId": "a",
+    "entityPath": "a",
+    "attrForEntityId": "href",
+    "hasPrescraping": true,
+    "tagForPrescraping": "div.pagination-bar li.num-pag a",
+    "haveToExplore": true,
+    "patternObjects": [
+      {
+        "elementToScrape": "title",
+        "tagForElementToScrape": "h3.news-title a",
+        "methodForElementToScrape": true,
+        "attrForElementToScrape": null
+      },
+      {
+        "elementToScrape": "lastUpdate",
+        "tagForElementToScrape": "div.news-date",
+        "methodForElementToScrape": true,
+        "attrForElementToScrape": null
+      }
+    ],
+    "innerPatternObjects": [
+      {
+        "elementToScrape": "content",
+        "tagForElementToScrape": "div.news-txt",
+        "methodForElementToScrape": true,
+        "attrForElementToScrape": null
+      }
+    ],
+    "tagForInnerBody": "div.news-container",
+    "hasAttachments": false,
+    "attachmentObject": [],
+    "hasInnerAttachments": true,
+    "attachmentInnerObject": [
+      {
+        "tagForElementToScrape": "div.img-photo img",
+        "attrForElementToScrape": "src"
+      }
+    ]
+  }
+
+/***************************/
+
+{
+   "patternName": "regione_campania",
+   "url":"https://regione.campania.it/regione/it/news/primo-piano",
+   "tagForBody":"ul.news.container-fluid li.row.news-item",
+   "entityId":"p.desc a",
+   "entityPath":"p.desc a",
+   "attrForEntityId":"href",
+   "hasPrescraping":true,
+   "tagForPrescraping":"ul.pagination li.fl.fixed a",
+   "haveToExplore":true,
+   "patternObjects":[
+      {
+         "elementToScrape":"title",
+         "tagForElementToScrape":"p.title",
+         "methodForElementToScrape":true,
+         "attrForElementToScrape":null
+      }
+   ],
+   "innerPatternObjects":[
+      {
+         "elementToScrape":"content",
+         "tagForElementToScrape":"p",
+         "methodForElementToScrape":true,
+         "attrForElementToScrape":null
+      }
+   ],
+   "tagForInnerBody":"div#news_body",
+   "hasAttachments":false,
+   "attachmentObject":[
+      
+   ],
+   "hasInnerAttachments":true,
+   "attachmentInnerObject":[
+      {
+         "tagForElementToScrape":"div#news_body p a",
+         "attrForElementToScrape":"href"
+      }
+   ]
+}
+
+
+
+
