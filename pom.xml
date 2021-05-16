@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.claudiodimauro.Scrape4Engineering</groupId>
     <artifactId>Scrape4Engineering</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.4</version>
     <name>Scrape4Engineering</name>
     <description>Demo project for Spring Boot</description>
     <properties>
